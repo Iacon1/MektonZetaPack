@@ -79,7 +79,7 @@ public abstract class AdditiveSystem implements Editable
 	public EditorPanel editorPanel()
 	{
 		EditorPanel panel = new EditorPanel(640, 480, 8, 4);
-		panel.addInfo(0, 0, "Cost:", 4, 4, () -> {return getCost() + " CP";});
+		panel.addInfo(0, 0, "Cost:", 4, 4, () -> {return getCost().getValue(Scale.mekton) + " CP";});
 		panel.addInfo(0, 1, "Weight:", 4, 4, () -> {return getWeight() + " tons";});
 		return panel;
 	}

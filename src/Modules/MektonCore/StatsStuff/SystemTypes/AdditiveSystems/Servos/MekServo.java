@@ -200,7 +200,7 @@ public class MekServo extends Servo
 		subPanel1.addInfo(0, 1, "Max spaces:", 4, 6, () -> {return getMaxSpaces().getValue(Scale.mekton) + " Mek spaces";});
 		subPanel1.addInfo(0, 2, "Max armor:", 4, 6, () -> {return getMaxArmor().getValue(Scale.mekton) + " Mek SP";});
 		
-		EditorPanel subPanel2 = (EditorPanel) panel.addSubSlate(0, 7, 10, 6, null); // 3, 4, 5, 6, 7, 8
+		EditorPanel subPanel2 = (EditorPanel) panel.addSubSlate(0, 7, 9, 10, null); // 3, 4, 5, 6, 7, 8
 		
 		subPanel2.addOptions(0, 0, "Scale:", 4, 6, Scale.values(), new DataFunction<Scale>()
 		{

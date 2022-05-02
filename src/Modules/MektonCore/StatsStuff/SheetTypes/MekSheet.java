@@ -7,10 +7,12 @@ package Modules.MektonCore.StatsStuff.SheetTypes;
 import java.util.List;
 
 import GameEngine.Editor.Editable;
+import GameEngine.Editor.EditorPanel;
 import Modules.MektonCore.Enums.Scale;
 import Modules.MektonCore.StatsStuff.AdditiveSystemList;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledCostValue;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystem;
+import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.AdditiveSystem;
 
 public class MekSheet extends AdditiveSystemList implements Editable
 {
@@ -30,5 +32,25 @@ public class MekSheet extends AdditiveSystemList implements Editable
 		// TODO WE and stuff
 		
 		return multValue;
+	}
+	
+	public double getWeight()
+	{
+		double weight = 0;
+		
+		for (AdditiveSystem additiveSystem : additiveSystems) {weight += additiveSystem.getWeight();}
+		
+		return weight;
+	}
+	@Override
+	public EditorPanel editorPanel()
+	{
+		EditorPanel editorPanel = new EditorPanel(640, 480, 64, 64); // TODO 
+		editorPanel.addInfo(0, 0, "Name:", 5, 5, () -> {return "Mek";}); // TODO
+		editorPanel.addInfo(0, 1, "Cost:", 5, 5, () -> {return getCost().getValue(Scale.mekton) + " CP";});
+		editorPanel.addInfo(0, 2, "Weight:", 5, 5, () -> {return getWeight() + " tons";});
+		editorPanel.addOptions(0, 3, "Servos", 5, 10, 20, null, null);
+		
+		return editorPanel;
 	}
 }
