@@ -15,7 +15,7 @@ import java.awt.event.KeyEvent;
 
 import GameEngine.EntityToken;
 import GameEngine.ImageSprite;
-import GameEngine.Point2D;
+import GameEngine.IntPoint2D;
 import GameEngine.ScreenCanvas;
 import GameEngine.EntityTypes.CommandRunner;
 import GameEngine.EntityTypes.InputGetter;
@@ -61,7 +61,7 @@ public class DummyPlayer extends Human implements InputGetter, CommandRunner
 	@Override
 	public String onMousePress(int mX, int mY, int button)
 	{
-		AxialHexCoord3D point = mapToken.get().fromPixel(new Point2D(mX, mY));
+		AxialHexCoord3D point = mapToken.get().fromPixel(new IntPoint2D(mX, mY));
 		if (button == 0) return "move -q " + point.q + " -r " + point.r;
 		else return null;
 	}
@@ -96,7 +96,7 @@ public class DummyPlayer extends Human implements InputGetter, CommandRunner
 	}
 
 	@Override
-	public void render(ScreenCanvas canvas, Point2D camera)
+	public void render(ScreenCanvas canvas, IntPoint2D camera)
 	{
 		super.render(canvas, camera);
 		
@@ -107,9 +107,9 @@ public class DummyPlayer extends Human implements InputGetter, CommandRunner
 					statSummary();
 			
 			int fontSize = 20;
-			Point2D textSize = canvas.textSize(text, "MicrogrammaNormalFix", fontSize);
-			canvas.drawRectangle(Color.black, new Point2D(0, 0), textSize);
-			canvas.drawText(text, "MicrogrammaNormalFix", Color.red, new Point2D(0, 0), fontSize);
+			IntPoint2D textSize = canvas.textSize(text, "MicrogrammaNormalFix", fontSize);
+			canvas.drawRectangle(Color.black, new IntPoint2D(0, 0), textSize);
+			canvas.drawText(text, "MicrogrammaNormalFix", Color.red, new IntPoint2D(0, 0), fontSize);
 		}
 		chatBox.get().render(canvas, camera);
 	}

@@ -7,7 +7,7 @@ package Modules.HexUtilities.HexStructures.Axial;
 import java.util.ArrayList;
 import java.util.List;
 
-import GameEngine.Point2D;
+import GameEngine.IntPoint2D;
 import Modules.HexUtilities.HexConfig;
 import Modules.HexUtilities.HexDirection;
 import Modules.HexUtilities.HexStructures.HexCoord;
@@ -130,9 +130,9 @@ public class AxialHexCoord implements HexCoord
 	}
 	
 	@Override
-	public Point2D toPixel() // https://www.redblobgames.com/grids/hexagons/#hex-to-pixel
+	public IntPoint2D toPixel() // https://www.redblobgames.com/grids/hexagons/#hex-to-pixel
 	{
-		Point2D point = new Point2D(0, 0);
+		IntPoint2D point = new IntPoint2D(0, 0);
 		point.x = ((3 * HexConfig.getHexWidth()) / 4 + 1) * q; // Extra q fixes a off-by-one spacing issue
 		// x = (3 / 2 * q * size) = (3 * width) / 4 * q
 		point.y = (HexConfig.getHexHeight() / 2) * q + HexConfig.getHexHeight() * r;
@@ -143,7 +143,7 @@ public class AxialHexCoord implements HexCoord
 	}
 
 	@Override
-	public AxialHexCoord fromPixel(Point2D point)
+	public AxialHexCoord fromPixel(IntPoint2D point)
 	{
 		AxialHexCoord coord = new AxialHexCoord(0, 0);
 		coord.q = Math.floorDiv(point.x, (3 * HexConfig.getHexWidth()) / 4 + 1);

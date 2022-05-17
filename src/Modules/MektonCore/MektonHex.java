@@ -4,15 +4,15 @@
 
 package Modules.MektonCore;
 
-import GameEngine.Point2D;
+import GameEngine.IntPoint2D;
 import Modules.MektonCore.Enums.TerrainType;
 
 public class MektonHex
 {
 	// Texture properties (tileset & size defined elsewhere, not controllable per tile)
 	
-	public Point2D texturePos = new Point2D(0, 0);
-	
+	public IntPoint2D texturePos = new IntPoint2D(0, 0);
+
 	public TerrainType type = TerrainType.open;
 	
 	public static int getCost(TerrainType type) // Gets cost of moving through for pathfinding; TODO swimming mecha and magma-meks

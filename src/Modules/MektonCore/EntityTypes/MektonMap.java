@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import GameEngine.ScreenCanvas;
-import GameEngine.Point2D;
+import GameEngine.IntPoint2D;
 import GameEngine.Configurables.ConfigManager;
 import GameEngine.EntityTypes.GameEntity;
 import GameEngine.EntityTypes.SpriteEntity;
@@ -171,7 +171,7 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	 * 
 	 * @return Corresponding screen coordinate.
 	 */
-	public Point2D toPixel(AxialHexCoord3D coord, Point2D camera)
+	public IntPoint2D toPixel(AxialHexCoord3D coord, IntPoint2D camera)
 	{
 		return coord.toPixel().subtract(camera);
 	}
@@ -181,7 +181,7 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	 * 
 	 * @return Corresponding screen coordinate.
 	 */
-	public Point2D toPixel(AxialHexCoord3D coord)
+	public IntPoint2D toPixel(AxialHexCoord3D coord)
 	{
 		return toPixel(coord, ScreenCanvas.getCamera());
 	}
@@ -192,7 +192,7 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	 * 
 	 * @return Corresponding hex coordinate.
 	 */
-	public AxialHexCoord3D fromPixel(Point2D coord, Point2D camera)
+	public AxialHexCoord3D fromPixel(IntPoint2D coord, IntPoint2D camera)
 	{
 		return new AxialHexCoord3D(0, 0, 0).fromPixel(coord.add(camera));
 	}
@@ -203,7 +203,7 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	 * 
 	 * @return Corresponding hex coordinate.
 	 */
-	public AxialHexCoord3D fromPixel(Point2D coord)
+	public AxialHexCoord3D fromPixel(IntPoint2D coord)
 	{
 		return fromPixel(coord, ScreenCanvas.getCamera());
 	}
@@ -249,13 +249,13 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	
 	private void drawZFog(ScreenCanvas canvas)
 	{
-		canvas.drawImage(zFog, new Point2D(0, 0), new Point2D(0, 0), new Point2D(ConfigManager.getScreenWidth(), ConfigManager.getScreenHeight()));
+		canvas.drawImage(zFog, new IntPoint2D(0, 0), new IntPoint2D(0, 0), new IntPoint2D(ConfigManager.getScreenWidth(), ConfigManager.getScreenHeight()));
 	}
-	private void drawHexes(ScreenCanvas canvas, Point2D camera, int k, int cameraZ)
+	private void drawHexes(ScreenCanvas canvas, IntPoint2D camera, int k, int cameraZ)
 	{
 		if (k >= map.getLevels()) return; // Cannot draw hexes above this
 		// TODO optimization using BakingCanvas
-		camera = camera.add(new Point2D(0, (k - cameraZ) * HexConfig.getHexHeight()));
+		camera = camera.add(new IntPoint2D(0, (k - cameraZ) * HexConfig.getHexHeight()));
 		for (int i = 0; i < map.getColumns(); ++i) // columns
 			for (int j = map.firstRow(i); j <= map.lastRow(i); ++j)
 			{
@@ -263,16 +263,16 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 				
 				AxialHexCoord3D hexCoord = new AxialHexCoord3D(i, j, k);
 				MektonHex hex = getHex(hexCoord);
-				canvas.drawImage(tileset, toPixel(hexCoord, camera), new Point2D(
+				canvas.drawImage(tileset, toPixel(hexCoord, camera), new IntPoint2D(
 						hex.texturePos.x * HexConfig.getHexWidth(), 
 						hex.texturePos.y * HexConfig.getHexHeight()),
-						new Point2D(HexConfig.getHexWidth(), HexConfig.getHexHeight()));
+						new IntPoint2D(HexConfig.getHexWidth(), HexConfig.getHexHeight()));
 				canvas.drawText(hexCoord.q + ", " + hexCoord.r, GraphicsManager.getFont("MicrogrammaNormalFix"), Color.white, toPixel(hexCoord, camera), 16);
 			}
 	}
-	private void drawChildren(ScreenCanvas canvas, Point2D camera, int k, int cameraZ)
+	private void drawChildren(ScreenCanvas canvas, IntPoint2D camera, int k, int cameraZ)
 	{
-		camera = camera.add(new Point2D(0, (k - cameraZ) * HexConfig.getHexHeight()));
+		camera = camera.add(new IntPoint2D(0, (k - cameraZ) * HexConfig.getHexHeight()));
 		for (int t = 0; t < getChildren().size(); ++t) // O(w)
 		{
 			HexEntity<AxialHexCoord3D> entity = (HexEntity<AxialHexCoord3D>) getChildren().get(t);
@@ -280,7 +280,7 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 			if (pos3D.z == k) entity.render(canvas, camera);
 		}
 	}
-	public void render(ScreenCanvas canvas, Point2D camera, int z)
+	public void render(ScreenCanvas canvas, IntPoint2D camera, int z)
 	{
 		if (map == null || map.getColumns() == 0 || map.getRows() == 0 || map.getLevels() == 0) return;
 		
@@ -294,7 +294,7 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 		}
 	}
 	@Override
-	public void render(ScreenCanvas canvas, Point2D camera)
+	public void render(ScreenCanvas canvas, IntPoint2D camera)
 	{
 		render(canvas, camera, 0);
 	}

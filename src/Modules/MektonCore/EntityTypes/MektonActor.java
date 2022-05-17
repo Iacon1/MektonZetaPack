@@ -4,7 +4,6 @@
 
 package Modules.MektonCore.EntityTypes;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +12,12 @@ import Utils.MiscUtils;
 import Utils.SimpleTimer;
 
 import GameEngine.Animation;
+import GameEngine.Configurables.ConfigManager;
 import GameEngine.EntityTypes.CommandRunner;
 import Modules.GenUtils.Commands.InvalidParameterException;
 import Modules.GenUtils.Commands.ParsingCommand;
 import Modules.GenUtils.Commands.ParsingCommandBank;
+import Modules.HexUtilities.HexConfig;
 import Modules.HexUtilities.HexDirection;
 import Modules.HexUtilities.HexStructures.Axial.AxialHexCoord3D;
 import Modules.MektonCore.MektonUtil.Rolls;
@@ -29,7 +30,7 @@ import Modules.Security.RoleHolder;
 public abstract class MektonActor extends MapEntity implements CommandRunner, RoleHolder
 {
 	
-	
+	public static final int turnTime = 10; // Time of a single turn in seconds
 	private double actionPoints;
 	private transient SimpleTimer actionTimer;
 	private transient ParsingCommandBank commandBank;
@@ -57,8 +58,6 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	// Commands
 	private void moveFunction(Object caller, Map<String, String> parameters, Map<String, Boolean> flags)
 	{
-		if (caller != this) return; // The only thing that should run *our* moveFunction is *us*
-			
 		if (parameters.get("q") != null && parameters.get("r") != null)
 		{
 			AxialHexCoord3D target = new AxialHexCoord3D(Integer.valueOf(parameters.get("q")), Integer.valueOf(parameters.get("r")), hexPos.z);
@@ -66,22 +65,31 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 		}
 		else
 		{
-			if (flags.get("north") && flags.get("west")) moveDirectionalAct(HexDirection.northWest, 1, 2);
-			else if (flags.get("north") && flags.get("east")) moveDirectionalAct(HexDirection.northEast, 1, 2);
-			else if (flags.get("north")) moveDirectionalAct(HexDirection.north, 1, 2);
-
-			else if (flags.get("south") && flags.get("west")) moveDirectionalAct(HexDirection.southWest, 1, 2);
-			else if (flags.get("south") && flags.get("east")) moveDirectionalAct(HexDirection.southEast, 1, 2);
-			else if (flags.get("south")) moveDirectionalAct(HexDirection.south, 1, 2);
+			// Pixels per hex * Hexes per turn * Turns per second * Seconds per frame = Pixels per frame
 			
-			if (flags.get("up")) moveDirectionalAct(HexDirection.up, 1, 2);
-			if (flags.get("down")) moveDirectionalAct(HexDirection.down, 1, 2);
+			HexDirection moveDirection = null;
+			
+			if (flags.get("north") && flags.get("west")) moveDirection = HexDirection.northWest;
+			else if (flags.get("north") && flags.get("east")) moveDirection = HexDirection.northEast; 
+			else if (flags.get("north")) moveDirection = HexDirection.north;
+
+			else if (flags.get("south") && flags.get("west")) moveDirection = HexDirection.southWest;
+			else if (flags.get("south") && flags.get("east")) moveDirection = HexDirection.southEast;
+			else if (flags.get("south")) moveDirection = HexDirection.south;
+			
+			double speed = HexConfig.getHexHeight()
+					/ moveCost(moveDirection, 1, flags.get("flying"))
+					/ turnTime
+					/ ConfigManager.getFramerateCap();
+			
+			if (takeAction(moveCost(moveDirection, 1, flags.get("flying")))) moveDirectional(moveDirection, 1, speed);
+			
+			if (flags.get("up")) moveDirectional(HexDirection.up, 1, 2); // TODO
+			if (flags.get("down")) moveDirectional(HexDirection.down, 1, 2);
 		}
 	}
 	private void attackFunction(Object caller, Map<String, String> parameters, Map<String, Boolean> flags) throws InvalidParameterException
 	{
-		if (caller != this) return; // The only thing that should run *our* moveFunction is *us*
-		
 		int targetID = Integer.valueOf(parameters.get("target"));
 		int weaponID = Integer.valueOf(parameters.get("weapon"));
 		String locationName = parameters.get("location");
@@ -142,6 +150,7 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 						new ParsingCommand.Flag(new String[] {"south", "s"}, "Denotes moving south."),
 						new ParsingCommand.Flag(new String[] {"up", "u"}, "Denotes moving up."),
 						new ParsingCommand.Flag(new String[] {"down", "d"}, "Denotes moving down."),
+						new ParsingCommand.Flag(new String[] {"flying", "f"}, "Denotes the use of flight MA."),
 				},
 				(caller, parameters, flags) -> {moveFunction(caller, parameters, flags);});
 		registerCommand(moveCommand);
@@ -216,49 +225,31 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	public abstract void takeDamage(Damage damage);
 	public abstract void defend(MektonActor aggressor, HitLocation location);
 	public abstract void attack(MektonActor defender, HitLocation location);
-	
-	// Conscious movementw
-	
-	public void moveTargetHexAct(AxialHexCoord3D target, int speed)
+
+	/**The cost in AP of moving to a target coordinate.
+	 * 
+	 * @param target The coordinate to move to.
+	 * @param walking Whether ground MA or flight MA is being used.
+	 * @return The action cost.
+	 */
+	public double moveCost(AxialHexCoord3D target, boolean flying)
 	{
-		double moveCost = Math.abs((float) hexPos.distance(target)) / (float) getMA(); // TODO assumes walking
-		if (takeAction(moveCost)) super.moveTargetHex(target, speed);
-		else pause();
+		if (flying) return 2 * moveCost(target, false);
+		else return Math.abs((double) hexPos.distance(target)) / (double) getMA();
 	}
-	public void moveDeltaHexAct(AxialHexCoord3D delta, int speed)
+	/**The cost in AP of moving to a target coordinate.
+	 * 
+	 * @param direction The direction to move in.
+	 * @param distance The distance to move in that direction.
+	 * @param walking Whether ground MA or flight MA is being used.
+	 * @return The action cost.
+	 */
+	public double moveCost(HexDirection direction, int distance, boolean flying)
 	{
-		moveTargetHexAct(hexPos.rAdd(delta), speed);
-	}
-	public void moveDirectionalAct(HexDirection dir, int distance, int speed)
-	{
-		AxialHexCoord3D delta = hexPos.getUnitVector(dir).rMultiply(distance);
-		setDirection(dir);
-		
-		moveDeltaHexAct(delta, speed);
+		return moveCost(this.getHexPos().rAdd(this.getHexPos().getUnitVector(direction).rMultiply(distance)), flying);
 	}
 	
 	// Overridden functions
-	
-	@Override
-	public void movePath(LinkedList<AxialHexCoord3D> path, int speed)
-	{
-		this.path = path;
-		moveTargetHexAct(path.getFirst(), speed);
-	}
-	@Override
-	public void updatePath()
-	{
-		if (this.path != null && this.path.size() != 0 && this.hexPos == this.path.getFirst()) // Ready for next step of path
-		{
-			this.path.remove();
-			if (this.path.isEmpty()) this.path = null;
-			else moveTargetHexAct(path.getFirst(), baseSpeed);
-		}
-		else if (this.path != null && this.path.size() != 0)
-		{
-			moveTargetHexAct(path.getFirst(), baseSpeed);
-		}
-	}
 	
 	@Override
 	public void onResume()
@@ -270,7 +261,7 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	public void update()
 	{
 		super.update();
-		if (actionTimer.checkTime(10000))
+		if (actionTimer.checkTime(turnTime * 1000))
 		{
 			resetActionPoints();
 		}

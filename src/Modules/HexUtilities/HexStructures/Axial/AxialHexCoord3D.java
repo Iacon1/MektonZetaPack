@@ -4,7 +4,7 @@
 
 package Modules.HexUtilities.HexStructures.Axial;
 
-import GameEngine.Point2D;
+import GameEngine.IntPoint2D;
 import Modules.HexUtilities.HexDirection;
 import Modules.HexUtilities.HexStructures.HexCoord;
 import Modules.HexUtilities.HexStructures.HexCoordConverter;
@@ -92,7 +92,7 @@ public class AxialHexCoord3D extends AxialHexCoord
 		}*/
 		
 		@Override
-		public AxialHexCoord3D fromPixel(Point2D point)
+		public AxialHexCoord3D fromPixel(IntPoint2D point)
 		{
 			return convertAxial(super.fromPixel(point), 0);
 		}
