@@ -7,10 +7,10 @@ package Modules.Security;
 import java.util.ArrayList;
 import java.util.List;
 
-import Modules.GenUtils.Commands.ParsingCommand;
-import Modules.GenUtils.Commands.ParsingCommand.CommandFunction;
-import Modules.GenUtils.Commands.ParsingCommand.Flag;
-import Modules.GenUtils.Commands.ParsingCommand.Parameter;
+import GameEngine.Commands.ParsingCommand;
+import GameEngine.Commands.ParsingCommand.CommandFunction;
+import GameEngine.Commands.ParsingCommand.Flag;
+import GameEngine.Commands.ParsingCommand.Parameter;
 
 public class RoleCommand extends ParsingCommand
 {

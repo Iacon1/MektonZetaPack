@@ -12,11 +12,11 @@ import Utils.MiscUtils;
 import Utils.SimpleTimer;
 
 import GameEngine.Animation;
+import GameEngine.Commands.InvalidParameterException;
+import GameEngine.Commands.ParsingCommand;
+import GameEngine.Commands.ParsingCommandBank;
 import GameEngine.Configurables.ConfigManager;
 import GameEngine.EntityTypes.CommandRunner;
-import Modules.GenUtils.Commands.InvalidParameterException;
-import Modules.GenUtils.Commands.ParsingCommand;
-import Modules.GenUtils.Commands.ParsingCommandBank;
 import Modules.HexUtilities.HexConfig;
 import Modules.HexUtilities.HexDirection;
 import Modules.HexUtilities.HexStructures.Axial.AxialHexCoord3D;

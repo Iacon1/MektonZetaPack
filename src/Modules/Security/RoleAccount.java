@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import Modules.GenUtils.Commands.ParsingCommand;
-import Modules.GenUtils.Commands.ParsingCommandAccount;
+import GameEngine.Commands.ParsingCommand;
+import GameEngine.Commands.ParsingCommandAccount;
 
 public abstract class RoleAccount extends ParsingCommandAccount implements RoleHolder
 {

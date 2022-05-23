@@ -4,7 +4,6 @@
 
 package Modules.TestModule;
 
-import Modules.GenUtils.ChatBox;
 import Modules.HexUtilities.HexConfig;
 import Modules.HexUtilities.HexStructures.Axial.AxialHexCoord3D;
 import Modules.MektonCore.EntityTypes.Human;
@@ -19,6 +18,7 @@ import GameEngine.IntPoint2D;
 import GameEngine.ScreenCanvas;
 import GameEngine.EntityTypes.CommandRunner;
 import GameEngine.EntityTypes.InputGetter;
+import GameEngine.EntityTypes.GUITypes.ChatBox;
 import Utils.MiscUtils;
 
 public class DummyPlayer extends Human implements InputGetter, CommandRunner

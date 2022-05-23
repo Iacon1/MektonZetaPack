@@ -7,8 +7,8 @@ package Modules.TestModule;
 import javax.swing.JPanel;
 
 import GameEngine.IntPoint2D;
+import GameEngine.Commands.ParsingCommandAccount;
 import GameEngine.Configurables.ConfigManager;
-import Modules.GenUtils.Commands.ParsingCommandAccount;
 import Modules.HexUtilities.HexEntity;
 
 public class TestAccount extends ParsingCommandAccount

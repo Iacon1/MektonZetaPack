@@ -23,8 +23,8 @@ import GameEngine.Editor.EditorPanel;
 import GameEngine.Configurables.ModuleTypes.Module.ModuleConfig;
 import GameEngine.EntityTypes.GameEntity;
 import GameEngine.Server.Account;
+import GameEngine.Server.BaseServer;
 import GameEngine.Server.GameServer;
-import Modules.GenUtils.BaseServer;
 import Modules.HexUtilities.HexEntity;
 import Modules.HexUtilities.HexStructures.Axial.AxialHexCoord3D;
 import Modules.MektonCore.MektonHex;
@@ -131,5 +131,11 @@ public class TestModule implements Module, WorldMakingModule, ServerMakingModule
 		panel.setSize(640, 480);
 		panel.validate();
 		panels.add(panel);
+	}
+
+	@Override
+	public Account newAccount()
+	{
+		return new TestAccount();
 	}	
 }
