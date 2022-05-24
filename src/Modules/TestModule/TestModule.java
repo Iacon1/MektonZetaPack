@@ -66,7 +66,7 @@ public class TestModule implements Module, WorldMakingModule, ServerMakingModule
 	public void newWorld()
 	{
 		GameInfo.setWorld(new GameInfo.GameWorld());
-		MektonMap map = new MektonMap("Tilesets/DummyTileset", "/Tilesets/ZFog", EnvironmentType.clear);
+		MektonMap<MektonHex> map = new MektonMap<MektonHex>("Tilesets/DummyTileset", "/Tilesets/ZFog", EnvironmentType.clear);
 		map.setDimensions(18, 9, 1, new MektonHex());
 	}
 	@Override

@@ -16,9 +16,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.google.gson.reflect.TypeToken;
+
 import GameEngine.ScreenCanvas;
 import GameEngine.IntPoint2D;
 import GameEngine.Configurables.ConfigManager;
+import GameEngine.Configurables.ModuleManager;
 import GameEngine.EntityTypes.GameEntity;
 import GameEngine.EntityTypes.SpriteEntity;
 import GameEngine.Managers.GraphicsManager;
@@ -34,12 +37,27 @@ import Modules.MektonCore.MektonHex;
 import Modules.MektonCore.Enums.EnvironmentType;
 import Modules.Pathfinding.AStar;
 import Modules.Pathfinding.PathfindingAdapter;
+import Utils.JSONManager;
+import Utils.Logging;
+import Utils.MiscUtils;
+import Utils.GSONConfig.TransSerializables.TransSerializable;
 
-public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, MektonHex>
+public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap<AxialHexCoord3D, T>, TransSerializable
 {	
+	// Workaround for some genericing issues; This is the type our internal map uses.
+	private static class InternalMap<T extends MektonHex> extends AxialHex3DMap<AxialHexMapRectangle<T>, T>
+	{
+		public InternalMap(Supplier<AxialHexMapRectangle<T>> supplier) {super(supplier);}
+	}; 
+	
 	private String tileset; // Tileset
 	private String zFog; // A translucent image the same size as the screen that renders between Z-levels
-	private AxialHex3DMap<AxialHexMapRectangle<MektonHex>, MektonHex> map;
+	
+	private transient InternalMap<T> map;
+	private String hexClass;	// The name of the class of hex we're using - that is, the name of T.
+	private String serializedMap; // The serialized version of the map, to be serialized later.
+	
+	
 	private EnvironmentType environmentType;
 	
 	private int hexCost(AxialHexCoord3D a, AxialHexCoord3D b) // Cost of coord
@@ -68,8 +86,8 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	public MektonMap(String tileset, String zFog, EnvironmentType environmentType)
 	{
 		super();
-		Supplier<AxialHexMapRectangle<MektonHex>> supplier = () -> new AxialHexMapRectangle<MektonHex>();
-		map = new AxialHex3DMap<AxialHexMapRectangle<MektonHex>, MektonHex>(supplier);
+		Supplier<AxialHexMapRectangle<T>> supplier = () -> {return new AxialHexMapRectangle<T>();};
+		map = new InternalMap<T>(supplier);
 		
 		this.tileset = tileset;
 		this.zFog = zFog;
@@ -84,11 +102,13 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	public MektonMap()
 	{
 		super();
-		Supplier<AxialHexMapRectangle<MektonHex>> supplier = () -> new AxialHexMapRectangle<MektonHex>();
-		map = new AxialHex3DMap<AxialHexMapRectangle<MektonHex>, MektonHex>(supplier);
+		Supplier<AxialHexMapRectangle<T>> supplier = () -> {return new AxialHexMapRectangle<T>();};
+		map = new InternalMap<T>(supplier);
 		
 		tileset = null;
 		zFog = null;
+		hexClass = null;
+		serializedMap = null;
 		environmentType = null;
 		
 		pathfinder = new PathfindingAdapter<AxialHexCoord3D, AStar>(
@@ -105,7 +125,7 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	 * @param levels     Length in z-axis.
 	 * @param defaultHex Default hex data.
 	 */
-	public void setDimensions(int columns, int rows, int levels, MektonHex defaultHex) // Sets new dimensions for map
+	public void setDimensions(int columns, int rows, int levels, T defaultHex) // Sets new dimensions for map
 	{
 		map.setDimensions(columns, rows, levels);
 		for (int k = 0; k < levels; ++k)
@@ -152,11 +172,11 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 	{
 		return map.inBounds(coord);
 	}
-	public void setHex(AxialHexCoord3D coord, MektonHex hex)
+	public void setHex(AxialHexCoord3D coord, T defaultHex)
 	{
-		map.setHex(coord, hex);
+		map.setHex(coord, defaultHex);
 	}
-	public MektonHex getHex(AxialHexCoord3D coord)
+	public T getHex(AxialHexCoord3D coord)
 	{
 		return map.getHex(coord);
 	}
@@ -294,8 +314,23 @@ public class MektonMap extends GameEntity implements HexMap<AxialHexCoord3D, Mek
 		}
 	}
 	@Override
-	public void render(ScreenCanvas canvas, IntPoint2D camera)
+	public void render(ScreenCanvas canvas, IntPoint2D camera) {render(canvas, camera, 0);}
+	@Override
+	public void preSerialize()
 	{
-		render(canvas, camera, 0);
+		serializedMap = JSONManager.serializeJSON(map);
+		hexClass = MiscUtils.ClassToString(map.getHex(new AxialHexCoord3D(0, 0, 0)).getClass());
+	}
+	@Override
+	public void postDeserialize()
+	{
+		Class<T> hexClass = null;
+		try {hexClass = (Class<T>) ModuleManager.getLoader().loadClass(this.hexClass);} // Convert string back into class.
+		catch (Exception e) {Logging.logException(e); return;}
+		
+		map = (InternalMap<T>) JSONManager.deserializeCollectionJSONList(serializedMap, InternalMap.class, hexClass);
+		
+		serializedMap = null;
+		this.hexClass = null;
 	}
 }
