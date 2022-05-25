@@ -5,10 +5,12 @@
 package Modules.HexUtilities;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import GameEngine.DoublePoint2D;
 import GameEngine.EntityTypes.SpriteEntity;
 import Modules.HexUtilities.HexStructures.HexCoord;
+import Modules.HexUtilities.HexStructures.Axial.AxialHexCoord3D;
 
 public abstract class HexEntity<T extends HexCoord> extends SpriteEntity // T is coordinate type
 {
@@ -131,8 +133,12 @@ public abstract class HexEntity<T extends HexCoord> extends SpriteEntity // T is
 		onResume();
 	}
 	
-	
-	public void movePath(LinkedList<T> path, int speed)
+	/**Moves the entity along a path.
+	 * 
+	 * @param path  The path of hexes to take.
+	 * @param speed Speed to move at.
+	 */
+	public void movePath(LinkedList<T> path, double speed)
 	{
 		this.path = path;
 		moveTargetHex(path.getFirst(), speed);

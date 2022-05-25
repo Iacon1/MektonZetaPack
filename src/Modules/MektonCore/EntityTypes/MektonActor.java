@@ -4,6 +4,7 @@
 
 package Modules.MektonCore.EntityTypes;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +62,19 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 		if (parameters.get("q") != null && parameters.get("r") != null)
 		{
 			AxialHexCoord3D target = new AxialHexCoord3D(Integer.valueOf(parameters.get("q")), Integer.valueOf(parameters.get("r")), hexPos.z);
-			movePath(mapToken.get().pathfind(hexPos, target), 2);
+			
+			LinkedList<AxialHexCoord3D> path = (LinkedList<AxialHexCoord3D>) mapToken.get().pathfind(hexPos, target);
+			if (path == null) return;
+			
+			double speed = HexConfig.getHexHeight()
+					/ moveCost(hexPos.getDirectionTo(path.get(0)), 1, flags.get("flying"))
+					* 2	// Actions per turn
+					/ turnTime
+					/ ConfigManager.getFramerateCap();
+			
+			
+			if (takeAction(moveCost(path, flags.get("flying"))))
+				movePath(path, speed);
 		}
 		else
 		{
@@ -232,10 +245,21 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	public abstract void defend(MektonActor aggressor, HitLocation location);
 	public abstract void attack(MektonActor defender, HitLocation location);
 
+	/**The cost in AP of moving along a path.
+	 * 
+	 * @param path The path to move along.
+	 * @param flying Whether ground MA or flight MA is being used.
+	 * @return The action cost.
+	 */
+	public double moveCost(List<AxialHexCoord3D> path, boolean flying)
+	{
+		if (flying) return 2 * moveCost(path, false);
+		else return Math.abs((double) path.size()) / (double) getMA(); // TODO account for each hexe's movement cost
+	}
 	/**The cost in AP of moving to a target coordinate.
 	 * 
 	 * @param target The coordinate to move to.
-	 * @param walking Whether ground MA or flight MA is being used.
+	 * @param flying Whether ground MA or flight MA is being used.
 	 * @return The action cost.
 	 */
 	public double moveCost(AxialHexCoord3D target, boolean flying)
@@ -247,7 +271,7 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	 * 
 	 * @param direction The direction to move in.
 	 * @param distance The distance to move in that direction.
-	 * @param walking Whether ground MA or flight MA is being used.
+	 * @param flying Whether ground MA or flight MA is being used.
 	 * @return The action cost.
 	 */
 	public double moveCost(HexDirection direction, int distance, boolean flying)
