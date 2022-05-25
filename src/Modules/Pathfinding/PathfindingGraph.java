@@ -42,13 +42,13 @@ public class PathfindingGraph
 		}
 	}
 	
-	private List<Node> nodes_;
+	private List<Node> nodes;
 	
 	public PathfindingGraph(Cost costFunc, Distance distFunc)
 	{
 		this.costFunc = costFunc;
 		this.distFunc = distFunc;
-		nodes_ = new ArrayList<Node>();
+		nodes = new ArrayList<Node>();
 	}
 	
 	/** Resets the graph for a set size.
@@ -57,10 +57,10 @@ public class PathfindingGraph
 	 */
 	public void setSize(int size)
 	{
-		nodes_ = new ArrayList<Node>();
+		nodes = new ArrayList<Node>();
 		for (int i = 0; i < size; ++i)
 		{
-			nodes_.add(new Node());
+			nodes.add(new Node());
 		}
 	}
 	
@@ -71,10 +71,10 @@ public class PathfindingGraph
 	 */
 	public void addLink(int a, int b)
 	{
-		if (a >= nodes_.size() || b >= nodes_.size()) return;
+		if (a >= nodes.size() || b >= nodes.size()) return;
 		
-		nodes_.get(a).addNeighbor(b);
-		nodes_.get(b).addNeighbor(a);
+		nodes.get(a).addNeighbor(b);
+		nodes.get(b).addNeighbor(a);
 	}
 	
 	/** Cuts a link between a & b.
@@ -84,10 +84,10 @@ public class PathfindingGraph
 	 */
 	public void cutLink(int a, int b)
 	{
-		if (a >= nodes_.size() || b >= nodes_.size()) return;
+		if (a >= nodes.size() || b >= nodes.size()) return;
 		
-		nodes_.get(a).removeNeighbor(b);
-		nodes_.get(b).removeNeighbor(a);
+		nodes.get(a).removeNeighbor(b);
+		nodes.get(b).removeNeighbor(a);
 	}
 	
 	/** Returns the list of links to node.
@@ -97,7 +97,7 @@ public class PathfindingGraph
 	public List<Integer> getNeighbors(int node)
 	{
 		List<Integer> neighbors = new ArrayList<Integer>();
-		neighbors.addAll(nodes_.get(node).neighbors);
+		neighbors.addAll(nodes.get(node).neighbors);
 		return neighbors;
 	}
 	

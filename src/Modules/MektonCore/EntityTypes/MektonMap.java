@@ -62,6 +62,10 @@ public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap
 	
 	private int hexCost(AxialHexCoord3D a, AxialHexCoord3D b) // Cost of coord
 	{
+		HexDirection dirA = a.getDirectionTo(b); // Direction from a to b
+		HexDirection dirB = b.getDirectionTo(a); // Direction from b to a
+		if (getHex(a).walls.get(dirA) || getHex(b).walls.get(dirB)) // Walls in the way
+			return -1;
 		return getHex(b).getCost();
 	}
 	private int hexDist(AxialHexCoord3D a, AxialHexCoord3D b) // Cost of coord
