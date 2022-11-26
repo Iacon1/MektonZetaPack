@@ -4,7 +4,9 @@
 
 package Modules.TestModule;
 
-import GameEngine.ScreenCanvas;
+import GameEngine.Graphics.Camera;
+import GameEngine.Graphics.ScreenCanvas;
+import GameEngine.Graphics.UtilCanvas;
 
 import java.util.List;
 
@@ -22,6 +24,7 @@ import GameEngine.Configurables.ModuleTypes.WorldMakingModule;
 import GameEngine.Editor.EditorPanel;
 import GameEngine.Configurables.ModuleTypes.Module.ModuleConfig;
 import GameEngine.EntityTypes.GameEntity;
+import GameEngine.EntityTypes.Behaviors.CameraHolder;
 import GameEngine.Server.Account;
 import GameEngine.Server.BaseServer;
 import GameEngine.Server.GameServer;
@@ -36,6 +39,7 @@ import Modules.MektonCore.Enums.Scale;
 import Modules.MektonCore.Enums.ServoClass;
 import Modules.MektonCore.StatsStuff.HitLocation.ServoType;
 import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos.MekServo;
+import Utils.Logging;
 
 public class TestModule implements Module, WorldMakingModule, ServerMakingModule, GraphicsHandlerModule, PlayerHandlerModule, EditorPopulatingModule
 {
@@ -76,12 +80,15 @@ public class TestModule implements Module, WorldMakingModule, ServerMakingModule
 	}
 
 	@Override
-	public void drawWorld(ScreenCanvas canvas)
+	public void drawWorld(GameEntity viewer, ScreenCanvas canvas)
 	{
-		if (GameInfo.getWorld() == null) return;
-		HexEntity<AxialHexCoord3D> possessee = (HexEntity<AxialHexCoord3D>) GameInfo.getWorld().getEntity(GameInfo.getPossessee());
-		ScreenCanvas.setCamera(possessee.getPos().subtract(new IntPoint2D(ConfigManager.getScreenWidth() / 2, ConfigManager.getScreenHeight() / 2)));
-		((MektonMap) GameInfo.getWorld().getRootEntities().get(0)).render(canvas, ScreenCanvas.getCamera(), possessee.getHexPos().z);
+		try
+		{
+			if (GameInfo.getWorld() == null) return;
+			Camera view = viewer.getBehavior(CameraHolder.class).getCamera();
+			GameInfo.getWorld().getRootEntities().get(0).render(canvas, view);
+		}
+		catch (Exception e) {Logging.logException(e);}
 	}
 
 	@Override

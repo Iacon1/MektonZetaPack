@@ -4,11 +4,14 @@
 
 package Modules.MektonCore.EntityTypes;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
 import Modules.MektonCore.StatsStuff.HitLocation;
 import Modules.MektonCore.StatsStuff.DamageTypes.Damage;
 import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos.MekServo;
 
-public class Mek extends MektonActor
+public abstract class Mek extends MektonActor
 {
 	
 	public MekServo getServo(HitLocation location)
@@ -71,5 +74,4 @@ public class Mek extends MektonActor
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

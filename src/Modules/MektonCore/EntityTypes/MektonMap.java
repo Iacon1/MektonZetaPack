@@ -11,6 +11,8 @@
 package Modules.MektonCore.EntityTypes;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +20,8 @@ import java.util.function.Supplier;
 
 import com.google.gson.reflect.TypeToken;
 
-import GameEngine.ScreenCanvas;
+import GameEngine.Graphics.Camera;
+import GameEngine.Graphics.ScreenCanvas;
 import GameEngine.IntPoint2D;
 import GameEngine.Configurables.ConfigManager;
 import GameEngine.Configurables.ModuleManager;
@@ -195,19 +198,9 @@ public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap
 	 * 
 	 * @return Corresponding screen coordinate.
 	 */
-	public IntPoint2D toPixel(AxialHexCoord3D coord, IntPoint2D camera)
+	public IntPoint2D toPixel(AxialHexCoord3D coord, Camera camera)
 	{
-		return coord.toPixel().subtract(camera);
-	}
-	/** Converts a hex coord to a *screen* coordinate, i. e. accounting for last camera pos.
-	 * 
-	 * @param coord Coordinate to convert.
-	 * 
-	 * @return Corresponding screen coordinate.
-	 */
-	public IntPoint2D toPixel(AxialHexCoord3D coord)
-	{
-		return toPixel(coord, ScreenCanvas.getCamera());
+		return coord.toPixel().subtract(camera.topLeftCorner);
 	}
 	/** Converts a screen coord to a hex coordinate, accounting for camera pos.
 	 * 
@@ -227,9 +220,9 @@ public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap
 	 * 
 	 * @return Corresponding hex coordinate.
 	 */
-	public AxialHexCoord3D fromPixel(IntPoint2D coord)
+	public AxialHexCoord3D fromPixel(IntPoint2D coord, Camera camera)
 	{
-		return fromPixel(coord, ScreenCanvas.getCamera());
+		return fromPixel(coord, camera.topLeftCorner);
 	}
 	
 	/** Finds the highest hex at a position below a certain threshold, if one exists, and
@@ -273,30 +266,29 @@ public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap
 	
 	private void drawZFog(ScreenCanvas canvas)
 	{
-		canvas.drawImage(zFog, new IntPoint2D(0, 0), new IntPoint2D(0, 0), new IntPoint2D(ConfigManager.getScreenWidth(), ConfigManager.getScreenHeight()));
+		canvas.addImage(zFog, new IntPoint2D(0, 0), new IntPoint2D(0, 0), new IntPoint2D(ConfigManager.getScreenWidth(), ConfigManager.getScreenHeight()));
 	}
-	private void drawHexes(ScreenCanvas canvas, IntPoint2D camera, int k, int cameraZ)
+	private void drawHexes(ScreenCanvas canvas, Camera camera, int k)
 	{
 		if (k >= map.getLevels()) return; // Cannot draw hexes above this
-		// TODO optimization using BakingCanvas
-		camera = camera.add(new IntPoint2D(0, (k - cameraZ) * HexConfig.getHexHeight()));
+		camera.topLeftCorner.y += (k - camera.z) * HexConfig.getHexHeight();
 		for (int i = 0; i < map.getColumns(); ++i) // columns
 			for (int j = map.firstRow(i); j <= map.lastRow(i); ++j)
 			{
-				if (k != findHighestHex(new AxialHexCoord(i, j), cameraZ)) continue;
+				if (k != findHighestHex(new AxialHexCoord(i, j), camera.z)) continue;
 				
 				AxialHexCoord3D hexCoord = new AxialHexCoord3D(i, j, k);
 				MektonHex hex = getHex(hexCoord);
-				canvas.drawImage(tileset, toPixel(hexCoord, camera), new IntPoint2D(
+				canvas.addImage(tileset, toPixel(hexCoord, camera), new IntPoint2D(
 						hex.texturePos.x * HexConfig.getHexWidth(), 
 						hex.texturePos.y * HexConfig.getHexHeight()),
 						new IntPoint2D(HexConfig.getHexWidth(), HexConfig.getHexHeight()));
-				canvas.drawText(hexCoord.q + ", " + hexCoord.r, GraphicsManager.getFont("MicrogrammaNormalFix"), Color.white, toPixel(hexCoord, camera), 16);
+				canvas.addText(hexCoord.q + ", " + hexCoord.r, "MicrogrammaNormalFix", Color.white, toPixel(hexCoord, camera), 16); // Debug
 			}
 	}
-	private void drawChildren(ScreenCanvas canvas, IntPoint2D camera, int k, int cameraZ)
+	private void drawChildren(ScreenCanvas canvas, Camera camera, int k)
 	{
-		camera = camera.add(new IntPoint2D(0, (k - cameraZ) * HexConfig.getHexHeight()));
+		camera.topLeftCorner = camera.topLeftCorner.add(new IntPoint2D(0, (k - camera.z) * HexConfig.getHexHeight()));
 		for (int t = 0; t < getChildren().size(); ++t) // O(w)
 		{
 			HexEntity<AxialHexCoord3D> entity = (HexEntity<AxialHexCoord3D>) getChildren().get(t);
@@ -304,21 +296,19 @@ public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap
 			if (pos3D.z == k) entity.render(canvas, camera);
 		}
 	}
-	public void render(ScreenCanvas canvas, IntPoint2D camera, int z)
+	public void render(ScreenCanvas canvas, Camera camera)
 	{
 		if (map == null || map.getColumns() == 0 || map.getRows() == 0 || map.getLevels() == 0) return;
 		
-		for (int k = 0; k <= z; ++k) // O(1 + n * n^2 + n * w) = O(n^3)
+		for (int k = 0; k <= camera.z; ++k) // O(1 + n * n^2 + n * w) = O(n^3)
 		{
-			if (k < z - 1) drawZFog(canvas); // O(1)
+			if (k < camera.z - 1) drawZFog(canvas); // O(1)
 			
-			drawHexes(canvas, camera, k, z); // O(n^2)
+			drawHexes(canvas, camera, k); // O(n^2)
 			
-			drawChildren(canvas, camera, k, z); // O(w)
+			drawChildren(canvas, camera, k); // O(w)
 		}
 	}
-	@Override
-	public void render(ScreenCanvas canvas, IntPoint2D camera) {render(canvas, camera, 0);}
 	@Override
 	public void preSerialize()
 	{
@@ -337,4 +327,6 @@ public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap
 		serializedMap = null;
 		this.hexClass = null;
 	}
+	@Override public void handleMouse(int userID, MouseEvent event) {}
+	@Override public void handleKeyboard(int userID, KeyEvent event) {}
 }

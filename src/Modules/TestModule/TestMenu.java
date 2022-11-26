@@ -4,9 +4,12 @@
 
 package Modules.TestModule;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
 import GameEngine.GameInfo;
-import GameEngine.ImageSprite;
 import GameEngine.EntityTypes.GUITypes.GUISpriteEntity;
+import GameEngine.Graphics.SingleSprite;
 import Modules.HexUtilities.HexConfig;
 
 public class TestMenu extends GUISpriteEntity
@@ -14,7 +17,7 @@ public class TestMenu extends GUISpriteEntity
 	public TestMenu()
 	{
 		super();
-		setSprite(new ImageSprite(GameInfo.getServerPackResource("DummyPlayer.PNG")));
+		setSprite(new SingleSprite(GameInfo.getServerPackResource("DummyPlayer.PNG")));
 		setSpriteParams(0, 0, HexConfig.getHexWidth(), 2 * HexConfig.getHexHeight());
 		align(AlignmentPoint.northEast, null, AlignmentPoint.northEast);
 	}
@@ -42,6 +45,18 @@ public class TestMenu extends GUISpriteEntity
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void handleMouse(int userID, MouseEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleKeyboard(int userID, KeyEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

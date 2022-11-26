@@ -89,10 +89,10 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 			else if (flags.get("south")) moveDirection = HexDirection.south;
 			
 			double speed = HexConfig.getHexHeight()
-					/ moveCost(moveDirection, 1, flags.get("flying"))
-					* 2	// Actions per turn
-					/ turnTime
-					/ ConfigManager.getFramerateCap();
+					* (1d / moveCost(moveDirection, 1, flags.get("flying")))
+					* 2d
+					* (1d / turnTime)
+					* (1d / ConfigManager.getFramerateCap());
 			/*  This one's complicated.
 				getHexHeight = Pixels per hex
 				1 / moveCost = 1 / (Actions per hex) = Hexes per action
@@ -187,7 +187,7 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 						new ParsingCommand.Flag(new String[] {"middle", "m"}, "Target the middle of the opponent."),
 						new ParsingCommand.Flag(new String[] {"right", "r"}, "Target the right side of the opponent."),},
 				(caller, parameters, flags) -> {moveFunction(caller, parameters, flags);});
-		registerCommand(moveCommand);
+		registerCommand(attackCommand);
 	}
 		
 	// Protected abstracts

@@ -4,12 +4,10 @@
 
 package Modules.MektonCore.EntityTypes;
 
-import Modules.MektonCore.StatsStuff.HitLocation;
-import Modules.MektonCore.StatsStuff.DamageTypes.Damage;
 import Modules.MektonCore.StatsStuff.SheetTypes.HumanSheet;
 import Modules.MektonCore.StatsStuff.SheetTypes.HumanSheet.Stat;
 
-public class Human extends MektonActor
+public abstract class Human extends MektonActor
 {
 	private HumanSheet stats;
 	
@@ -54,22 +52,4 @@ public class Human extends MektonActor
 	{
 		return name;
 	}
-
-	@Override
-	public void onPause() {}
-
-	@Override
-	public void onStart() {}
-
-	@Override
-	public void onAnimStop() {}
-
-	@Override
-	public void takeDamage(Damage damage) {}
-
-	@Override
-	public void defend(MektonActor aggressor, HitLocation location) {}
-
-	@Override
-	public void attack(MektonActor defender, HitLocation location) {}
 }
