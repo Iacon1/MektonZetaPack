@@ -127,7 +127,7 @@ public class DummyPlayer extends Human implements InputHandler, CommandRunner
 	public void handleKeyboard(int userID, KeyEvent event)
 	{
 		if (chatBox.get().isSelected()) return;
-		if (event.getID() == KeyEvent.KEY_PRESSED)
+		if (event.getID() != KeyEvent.KEY_RELEASED)
 		{
 			switch (event.getKeyCode())
 			{

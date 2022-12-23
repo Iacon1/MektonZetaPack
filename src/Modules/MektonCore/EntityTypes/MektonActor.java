@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import Utils.Logging;
-import Utils.MiscUtils;
 import Utils.SimpleTimer;
 
 import GameEngine.Animation;
@@ -59,6 +58,7 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	// Commands
 	private void moveFunction(Object caller, Map<String, String> parameters, Map<String, Boolean> flags)
 	{
+		if (this.getSpeed() != 0) return; // Don't move if already moving
 		if (parameters.get("q") != null && parameters.get("r") != null)
 		{
 			AxialHexCoord3D target = new AxialHexCoord3D(Integer.valueOf(parameters.get("q")), Integer.valueOf(parameters.get("r")), hexPos.z);
@@ -205,7 +205,7 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 		
 		registerCommands();
 	}
-	public MektonActor(MektonMap map)
+	public MektonActor(MektonMap<?> map)
 	{
 		super(map);
 		actionPoints = 0f;
