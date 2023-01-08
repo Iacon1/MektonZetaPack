@@ -21,9 +21,10 @@ import Modules.HexUtilities.HexConfig;
 import Modules.HexUtilities.HexDirection;
 import Modules.HexUtilities.HexStructures.Axial.AxialHexCoord3D;
 import Modules.MektonCore.MektonUtil.Rolls;
-import Modules.MektonCore.StatsStuff.AdditiveSystemList;
+import Modules.MektonCore.StatsStuff.LocationList;
 import Modules.MektonCore.StatsStuff.HitLocation;
 import Modules.MektonCore.StatsStuff.DamageTypes.Damage;
+import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos.Servo;
 import Modules.Security.RoleAccount;
 import Modules.Security.RoleHolder;
 
@@ -114,7 +115,7 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 		String locationName = parameters.get("location");
 		
 		MektonActor opponent = null;
-		AdditiveSystemList opponentServos = null;
+		LocationList<Servo> opponentServos = null;
 		HitLocation location = new HitLocation(null, null, null, null, 0);
 		
 		if (locationName != null)
@@ -129,9 +130,9 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 				else location.side = Rolls.rollSide(opponentServos, location.type);
 				
 				if (parameters.get("index") != null) location.index = Integer.valueOf(parameters.get("index")) - 1; // -1 is because humans start counting at one
-				else location.index = Rolls.rollXDY(1, opponentServos.servoCount(location.type, location.side)) - 1;
+				else location.index = Rolls.rollXDY(1, opponentServos.getTypeAndSideCount(location.type, location.side)) - 1;
 				
-				if (opponentServos.getServo(location) == null) // Has the player not picked a valid location?
+				if (opponentServos.getLocation(location) == null) // Has the player not picked a valid location?
 					location = Rolls.mechaHitChart(opponentServos, true); // TODO error message?
 			}
 			catch (Exception e1) // Is a special?

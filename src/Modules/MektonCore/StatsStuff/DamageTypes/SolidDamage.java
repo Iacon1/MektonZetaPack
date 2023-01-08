@@ -52,7 +52,7 @@ public class SolidDamage implements Damage
 	@Override
 	public void apply(Mek recipient, HitLocation location)
 	{
-		if (location.type != null) apply(recipient, recipient.getServo(location));
+		if (location.type != null) apply(recipient, recipient.getSheet().getServo(location));
 		else if (location.special != null)
 		{
 			

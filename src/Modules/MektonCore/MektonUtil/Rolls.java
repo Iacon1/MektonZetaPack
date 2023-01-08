@@ -4,13 +4,12 @@
 
 package Modules.MektonCore.MektonUtil;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import Modules.MektonCore.StatsStuff.AdditiveSystemList;
+import Modules.MektonCore.StatsStuff.LocationList;
+import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos.Servo;
 import Modules.MektonCore.StatsStuff.HitLocation;
 import Modules.MektonCore.StatsStuff.HitLocation.Cinematic;
 import Modules.MektonCore.StatsStuff.HitLocation.ServoSide;
@@ -55,22 +54,21 @@ public class Rolls
 		else return roll;
 	}
 
-	public static ServoSide rollSide(AdditiveSystemList servos, ServoType type)
+	public static ServoSide rollSide(LocationList<Servo> servos, ServoType type)
 	{
-		int side = 0;
-		if (servos.servoCount(type) == 0)
+		if (servos.getTypeCount(type) == 0)
 			return null;
-		else if (servos.servoCount(type, ServoSide.left) == 0 && servos.servoCount(type, ServoSide.middle) == 0)
+		else if (servos.getTypeAndSideCount(type, ServoSide.left) == 0 && servos.getTypeAndSideCount(type, ServoSide.middle) == 0)
 			return ServoSide.right;
-		else if (servos.servoCount(type, ServoSide.left) == 0 && servos.servoCount(type, ServoSide.right) == 0)
+		else if (servos.getTypeAndSideCount(type, ServoSide.left) == 0 && servos.getTypeAndSideCount(type, ServoSide.right) == 0)
 			return ServoSide.middle;
-		else if (servos.servoCount(type, ServoSide.middle) == 0 && servos.servoCount(type, ServoSide.right) == 0)
+		else if (servos.getTypeAndSideCount(type, ServoSide.middle) == 0 && servos.getTypeAndSideCount(type, ServoSide.right) == 0)
 			return ServoSide.left;
-		else if (servos.servoCount(type, ServoSide.left) == 0)
+		else if (servos.getTypeAndSideCount(type, ServoSide.left) == 0)
 			return select(ServoSide.middle, ServoSide.right);
-		else if (servos.servoCount(type, ServoSide.middle) == 0)
+		else if (servos.getTypeAndSideCount(type, ServoSide.middle) == 0)
 			return select(ServoSide.left, ServoSide.right);
-		else if (servos.servoCount(type, ServoSide.right) == 0)
+		else if (servos.getTypeAndSideCount(type, ServoSide.right) == 0)
 			return select(ServoSide.left, ServoSide.middle);
 		else return select(ServoSide.left, ServoSide.middle, ServoSide.right);
 	}
@@ -115,18 +113,18 @@ public class Rolls
 		default: return null;
 		}
 	}
-	public static HitLocation mechaHitChart(AdditiveSystemList servos, boolean doSpecial)
+	public static HitLocation mechaHitChart(LocationList<Servo> servos, boolean doSpecial)
 	{
 		int roll = 0;
 		
 		Set<Integer> availableRolls = new HashSet<Integer>();
-		if (servos.servoCount(ServoType.head) != 0) availableRolls.add(1);
-		if (servos.servoCount(ServoType.torso) != 0) {availableRolls.add(2); availableRolls.add(3); availableRolls.add(4);}
-		if (servos.servoCount(ServoType.pod) != 0) availableRolls.add(4);
-		if (servos.servoCount(ServoType.arm) != 0) {availableRolls.add(5); availableRolls.add(6);}
-		if (servos.servoCount(ServoType.leg) != 0) {availableRolls.add(7); availableRolls.add(8);}
-		if (servos.servoCount(ServoType.wing) != 0) availableRolls.add(9);
-		if (servos.servoCount(ServoType.tail) != 0) availableRolls.add(9);
+		if (servos.getTypeCount(ServoType.head) != 0) availableRolls.add(1);
+		if (servos.getTypeCount(ServoType.torso) != 0) {availableRolls.add(2); availableRolls.add(3); availableRolls.add(4);}
+		availableRolls.add(4); // Pod never requires a re-roll, instead defaults to torso
+		if (servos.getTypeCount(ServoType.arm) != 0) {availableRolls.add(5); availableRolls.add(6);}
+		if (servos.getTypeCount(ServoType.leg) != 0) {availableRolls.add(7); availableRolls.add(8);}
+		if (servos.getTypeCount(ServoType.wing) != 0) availableRolls.add(9);
+		if (servos.getTypeCount(ServoType.tail) != 0) availableRolls.add(9);
 		if (doSpecial) availableRolls.add(10);
 		
 		int index;
@@ -141,7 +139,7 @@ public class Rolls
 		case 2:
 		case 3: type = ServoType.torso; break;
 		case 4: // Pod
-			if (servos.servoCount(ServoType.pod) != 0) type = ServoType.pod;
+			if (servos.getTypeCount(ServoType.pod) != 0) type = ServoType.pod;
 			else type = ServoType.torso;
 			break;
 		case 5:
@@ -149,8 +147,8 @@ public class Rolls
 		case 7:
 		case 8: type = ServoType.leg; break;
 		case 9: // Other
-			if (servos.servoCount(ServoType.wing) == 0) type = ServoType.tail;
-			else if (servos.servoCount(ServoType.tail) == 0) type = ServoType.wing;
+			if (servos.getTypeCount(ServoType.wing) == 0) type = ServoType.tail;
+			else if (servos.getTypeCount(ServoType.tail) == 0) type = ServoType.wing;
 			else type = select(ServoType.wing, ServoType.tail);
 			break;
 		case 10: return specialHitChart(true);
@@ -159,7 +157,7 @@ public class Rolls
 		}
 		
 		side = rollSide(servos, type);
-		index = rollXDY(1, servos.servoCount(type, side)) - 1;
+		index = rollXDY(1, servos.getTypeAndSideCount(type, side)) - 1;
 		return new HitLocation(type, side, null, null, index);
 	}
 }

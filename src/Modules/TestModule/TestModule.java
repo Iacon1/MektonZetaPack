@@ -38,6 +38,7 @@ import Modules.MektonCore.Enums.LevelRAM;
 import Modules.MektonCore.Enums.Scale;
 import Modules.MektonCore.Enums.ServoClass;
 import Modules.MektonCore.StatsStuff.HitLocation.ServoType;
+import Modules.MektonCore.StatsStuff.SheetTypes.MekSheet;
 import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos.MekServo;
 import Utils.Logging;
 
@@ -134,7 +135,7 @@ public class TestModule implements Module, WorldMakingModule, ServerMakingModule
 	@Override
 	public void populateTabs(List<JPanel> panels)
 	{
-		EditorPanel panel = new MekServo(Scale.mekton, ServoClass.superLight, ServoClass.superLight, ServoType.torso, ArmorType.standard, LevelRAM.none).editorPanel();
+		EditorPanel panel = new MekSheet().editorPanel();
 		panel.setSize(640, 480);
 		panel.validate();
 		panels.add(panel);

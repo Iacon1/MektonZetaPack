@@ -196,44 +196,44 @@ public class MekServo extends Servo
 		panel.setCells(10, 20);
 		EditorPanel subPanel1 = (EditorPanel) panel.addSubSlate(0, 2, 10, 3, null); // 2, 3, 4
 		
-		subPanel1.addInfo(0, 0, "Max health:", 4, 6,() -> {return getMaxHealth().getValue(Scale.mekton) + " Mek kills";});
-		subPanel1.addInfo(0, 1, "Max spaces:", 4, 6, () -> {return getMaxSpaces().getValue(Scale.mekton) + " Mek spaces";});
-		subPanel1.addInfo(0, 2, "Max armor:", 4, 6, () -> {return getMaxArmor().getValue(Scale.mekton) + " Mek SP";});
+		subPanel1.addInfo(0, 0, "Max health:", 4, 6, 1, () -> {return getMaxHealth().getValue(Scale.mekton) + " Mek kills";});
+		subPanel1.addInfo(0, 1, "Max spaces:", 4, 6, 1, () -> {return getMaxSpaces().getValue(Scale.mekton) + " Mek spaces";});
+		subPanel1.addInfo(0, 2, "Max armor:", 4, 6, 1, () -> {return getMaxArmor().getValue(Scale.mekton) + " Mek SP";});
 		
 		EditorPanel subPanel2 = (EditorPanel) panel.addSubSlate(0, 5, 10, 6, null); // 5, 6, 7, 8, 9, 10
 		
-		subPanel2.addOptions(0, 0, "Scale:", 4, 6, Scale.values(), new DataFunction<Scale>()
+		subPanel2.addOptions(0, 0, "Scale:", 4, 6, 1, Scale.values(), new DataFunction<Scale>()
 		{
 			@Override public Scale getValue() {return scale;}
 			@Override public void setValue(Scale data) {scale = data;}	
 		});
-		subPanel2.addOptions(0, 1, "Servo class:", 4, 6, ServoClass.values(), new DataFunction<ServoClass>()
+		subPanel2.addOptions(0, 1, "Servo class:", 4, 6, 1, ServoClass.values(), new DataFunction<ServoClass>()
 		{
 			@Override public ServoClass getValue() {return servoClass;}
 			@Override public void setValue(ServoClass data) {servoClass = data;}	
 		});
-		subPanel2.addOptions(0, 2, "Armor class:", 4, 6, ServoClass.values(), new DataFunction<ServoClass>()
+		subPanel2.addOptions(0, 2, "Armor class:", 4, 6, 1, ServoClass.values(), new DataFunction<ServoClass>()
 		{
 			@Override public ServoClass getValue() {return armorClass;}
 			@Override public void setValue(ServoClass data) {armorClass = data;}	
 		});
-		subPanel2.addOptions(0, 3, "Servo type:", 4, 6, ServoType.values(), new DataFunction<ServoType>()
+		subPanel2.addOptions(0, 3, "Servo type:", 4, 6, 1, ServoType.values(), new DataFunction<ServoType>()
 		{
 			@Override public ServoType getValue() {return servoType;}
 			@Override public void setValue(ServoType data) {servoType = data;}	
 		});
-		subPanel2.addOptions(0, 4, "Armor type:", 4, 6, ArmorType.values(), new DataFunction<ArmorType>()
+		subPanel2.addOptions(0, 4, "Armor type:", 4, 6, 1, ArmorType.values(), new DataFunction<ArmorType>()
 		{
 			@Override public ArmorType getValue() {return armorType;}
 			@Override public void setValue(ArmorType data) {armorType = data;}	
 		});
-		subPanel2.addOptions(0, 5, "RAM level:", 4, 6, LevelRAM.values(), new DataFunction<LevelRAM>()
+		subPanel2.addOptions(0, 5, "RAM level:", 4, 6, 1, LevelRAM.values(), new DataFunction<LevelRAM>()
 		{
 			@Override public LevelRAM getValue() {return levelRAM;}
 			@Override public void setValue(LevelRAM data) {levelRAM = data;}	
 		});
 
-		panel.addIntegerWheel(0, 11, "Sacrificed kills: ", 4, 0, (int) getMaxHealthBase().getValue(scale), 6, new DataFunction<Integer>()
+		panel.addIntegerWheel(0, 11, "Sacrificed kills: ", 4, 0, (int) getMaxHealthBase().getValue(scale), 6, 1, new DataFunction<Integer>()
 		{
 
 			@Override public Integer getValue() {return (int) sacrificedHealth.getValue(scale);}

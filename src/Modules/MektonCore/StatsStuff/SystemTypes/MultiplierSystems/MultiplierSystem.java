@@ -2,7 +2,7 @@
 // Created 12/03/2021
 // A system with a cost multiplier.
 
-package Modules.MektonCore.StatsStuff.SystemTypes;
+package Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems;
 
 public abstract class MultiplierSystem
 {

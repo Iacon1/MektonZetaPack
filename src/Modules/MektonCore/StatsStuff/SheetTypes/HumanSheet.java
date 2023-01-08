@@ -8,9 +8,9 @@ package Modules.MektonCore.StatsStuff.SheetTypes;
 import java.util.HashMap;
 import java.util.Map;
 
-import Modules.MektonCore.StatsStuff.AdditiveSystemList;
+import Modules.MektonCore.StatsStuff.LocationList;
 
-public class HumanSheet extends AdditiveSystemList
+public class HumanSheet extends LocationList
 {
 	public enum Stat
 	{

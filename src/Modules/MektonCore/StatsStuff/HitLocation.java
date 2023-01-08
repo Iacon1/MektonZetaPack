@@ -61,5 +61,6 @@ public class HitLocation
 		this.side = side;
 		this.special = special;
 		this.cinematic = cinematic;
+		this.index = number;
 	}
 }

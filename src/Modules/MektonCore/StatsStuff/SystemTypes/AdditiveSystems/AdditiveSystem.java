@@ -8,14 +8,17 @@ import GameEngine.Editor.Editable;
 import GameEngine.Editor.EditorPanel;
 import Modules.MektonCore.Enums.Scale;
 import Modules.MektonCore.ExceptionTypes.ExcessValueException;
+import Modules.MektonCore.StatsStuff.HitLocation;
+import Modules.MektonCore.StatsStuff.LocatedItem;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledCostValue;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledHitValue;
 
-public abstract class AdditiveSystem implements Editable
+public abstract class AdditiveSystem implements Editable, LocatedItem
 {
 	private int systemID;
 	private ScaledHitValue health;
-
+	protected HitLocation location;
+	
 	/** Copy constructor */
 	public AdditiveSystem(AdditiveSystem system)
 	{
@@ -79,8 +82,14 @@ public abstract class AdditiveSystem implements Editable
 	public EditorPanel editorPanel()
 	{
 		EditorPanel panel = new EditorPanel(640, 480, 8, 4);
-		panel.addInfo(0, 0, "Cost:", 4, 4, () -> {return getCost().getValue(Scale.mekton) + " CP";});
-		panel.addInfo(0, 1, "Weight:", 4, 4, () -> {return getWeight() + " tons";});
+		panel.addInfo(0, 0, "Cost:", 4, 4, 1, () -> {return getCost().getValue(Scale.mekton) + " CP";});
+		panel.addInfo(0, 1, "Weight:", 4, 4, 1, () -> {return getWeight() + " tons";});
 		return panel;
+	}
+	
+	@Override
+	public HitLocation getLocation()
+	{
+		return location;
 	}
 }
