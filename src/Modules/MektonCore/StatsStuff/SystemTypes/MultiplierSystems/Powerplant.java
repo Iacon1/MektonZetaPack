@@ -7,9 +7,13 @@ package Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems;
 
 import GameEngine.Editor.Editable;
 import GameEngine.Editor.EditorPanel;
+
+import java.util.function.Supplier;
+
+import GameEngine.MenuSlate;
 import GameEngine.MenuSlate.DataFunction;
 
-public class Powerplant extends MultiplierSystem implements Editable
+public class Powerplant extends MultiplierSystem
 {
 	public enum Charge
 	{
@@ -65,7 +69,7 @@ public class Powerplant extends MultiplierSystem implements Editable
 	@Override
 	public double getMultiplier()
 	{
-		return charge.getCost(isHot) * source.getCost(); // Yes, multiplied. Check the rulebook, it's weird.
+		return (1 + charge.getCost(isHot)) * source.getCost(); // Yes, multiplied. Check the rulebook, it's weird.
 	}
 	
 	public int getMVMod() {return charge.getMVMod();}
@@ -74,33 +78,24 @@ public class Powerplant extends MultiplierSystem implements Editable
 	public double getMVModMult() {return charge.getMPModMult();} // Multiplier to MP
 
 	@Override
-	public String getName()
+	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier)
 	{
-		return "Powerplant";
-	}
-
-	@Override
-	public EditorPanel editorPanel()
-	{
-		EditorPanel panel = new EditorPanel(320, 30, 21, 2);
-		
-		panel.addInfo(0, 0, "Powerplant", 5, 0, 1, () -> {return null;});
-		panel.addOptions(6, 0, "", 0, 5, 1, Source.values(), new DataFunction<Source>()
+		slate.setCells(20, 1);
+		slate.addInfo(0, 0, "Powerplant", 4, 0, 1, () -> {return null;});
+		slate.addOptions(4, 0, "", 0, 5, 1, Source.values(), new DataFunction<Source>()
 		{
 			@Override public Source getValue() {return source;}
 			@Override public void setValue(Source data) {source = data;}
 		});
-		panel.addOptions(11, 0, "", 0, 5, 1, Charge.values(), new DataFunction<Charge>()
+		slate.addOptions(9, 0, "", 0, 5, 1, Charge.values(), new DataFunction<Charge>()
 		{
 			@Override public Charge getValue() {return charge;}
 			@Override public void setValue(Charge data) {charge = data;}
 		});
-		panel.addCheckbox(16, 0, "Hot", 2, 1, 1, new DataFunction<Boolean>()
+		slate.addCheckbox(15, 0, "Hot", 2, 1, 1, new DataFunction<Boolean>()
 		{
 			@Override public Boolean getValue() {return isHot;}
 			@Override public void setValue(Boolean data) {isHot = data;}
 		});
-		
-		return panel;
 	}
 }

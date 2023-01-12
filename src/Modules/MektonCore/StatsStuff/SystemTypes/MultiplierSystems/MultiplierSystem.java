@@ -4,7 +4,9 @@
 
 package Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems;
 
-public abstract class MultiplierSystem
+import GameEngine.MenuSlatePopulator;
+
+public abstract class MultiplierSystem implements MenuSlatePopulator
 {
 	public abstract double getMultiplier();
 }

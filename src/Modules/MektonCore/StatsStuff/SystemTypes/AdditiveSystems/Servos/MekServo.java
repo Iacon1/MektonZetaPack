@@ -194,13 +194,13 @@ public class MekServo extends Servo
 	{
 		EditorPanel panel = super.editorPanel();
 		panel.setCells(10, 20);
-		EditorPanel subPanel1 = (EditorPanel) panel.addSubSlate(0, 2, 10, 3, null); // 2, 3, 4
+/*		EditorPanel subPanel1 = (EditorPanel) panel.addSubSlate(0, 2, 10, 3, null); // 2, 3, 4
 		
 		subPanel1.addInfo(0, 0, "Max health:", 4, 6, 1, () -> {return getMaxHealth().getValue(Scale.mekton) + " Mek kills";});
 		subPanel1.addInfo(0, 1, "Max spaces:", 4, 6, 1, () -> {return getMaxSpaces().getValue(Scale.mekton) + " Mek spaces";});
 		subPanel1.addInfo(0, 2, "Max armor:", 4, 6, 1, () -> {return getMaxArmor().getValue(Scale.mekton) + " Mek SP";});
 		
-		EditorPanel subPanel2 = (EditorPanel) panel.addSubSlate(0, 5, 10, 6, null); // 5, 6, 7, 8, 9, 10
+//		EditorPanel subPanel2 = (EditorPanel) panel.addSubSlate(0, 5, 10, 6, null); // 5, 6, 7, 8, 9, 10
 		
 		subPanel2.addOptions(0, 0, "Scale:", 4, 6, 1, Scale.values(), new DataFunction<Scale>()
 		{
@@ -244,7 +244,7 @@ public class MekServo extends Servo
 				catch (InsufficientHealthException e) {Logging.logException(e);}
 			} 
 		});
-		
+		*/
 		return panel;
 	}
 	
