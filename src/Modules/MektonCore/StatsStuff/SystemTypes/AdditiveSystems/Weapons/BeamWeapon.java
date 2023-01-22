@@ -4,8 +4,11 @@
 
 package Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Weapons;
 
+import java.util.function.Supplier;
+
 import javax.swing.JPanel;
 
+import GameEngine.MenuSlate;
 import Modules.MektonCore.Enums.Scale;
 import Modules.MektonCore.StatsStuff.DamageTypes.Damage;
 import Modules.MektonCore.StatsStuff.DamageTypes.EnergyDamage;
@@ -258,5 +261,11 @@ public class BeamWeapon extends Weapon
 		case 20: return new ScaledDistanceValue(scale, 18);
 		default: return new ScaledDistanceValue(scale, 1);
 		}
+	}
+
+	@Override
+	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier) {
+		// TODO Auto-generated method stub
+		
 	}
 }

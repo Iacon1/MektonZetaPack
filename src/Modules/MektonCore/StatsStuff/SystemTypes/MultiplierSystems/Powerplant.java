@@ -5,9 +5,6 @@
 
 package Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems;
 
-import GameEngine.Editor.Editable;
-import GameEngine.Editor.EditorPanel;
-
 import java.util.function.Supplier;
 
 import GameEngine.MenuSlate;
@@ -45,8 +42,8 @@ public class Powerplant extends MultiplierSystem
 
 	public enum Source
 	{
-		combustion(1.0-0.33),
-		powercell(1.0-0.15),
+		combustion(-0.33),
+		powercell(-0.15),
 		fusion(1.0),
 		bioenergy(1.5);
 		
@@ -69,13 +66,17 @@ public class Powerplant extends MultiplierSystem
 	@Override
 	public double getMultiplier()
 	{
-		return (1 + charge.getCost(isHot)) * source.getCost(); // Yes, multiplied. Check the rulebook, it's weird.
+		double chargeCost = charge.getCost(isHot), sourceCost = source.getCost();
+		if (chargeCost < 1) chargeCost += 1;
+		if (sourceCost < 1) sourceCost += 1;
+	
+		return chargeCost * sourceCost - 1; // Formula as per semiofficial rules
 	}
 	
 	public int getMVMod() {return charge.getMVMod();}
 	public int getMAMod() {return charge.getMAMod();}
 	public int getMPModFlat() {return charge.getMPModFlat();} // Added to MP
-	public double getMVModMult() {return charge.getMPModMult();} // Multiplier to MP
+	public double getMPModMult() {return charge.getMPModMult();} // Multiplier to MP
 
 	@Override
 	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier)
@@ -87,12 +88,12 @@ public class Powerplant extends MultiplierSystem
 			@Override public Source getValue() {return source;}
 			@Override public void setValue(Source data) {source = data;}
 		});
-		slate.addOptions(9, 0, "", 0, 5, 1, Charge.values(), new DataFunction<Charge>()
+		slate.addOptions(9, 0, "", 0, 6, 1, Charge.values(), new DataFunction<Charge>()
 		{
 			@Override public Charge getValue() {return charge;}
 			@Override public void setValue(Charge data) {charge = data;}
 		});
-		slate.addCheckbox(15, 0, "Hot", 2, 1, 1, new DataFunction<Boolean>()
+		slate.addCheckbox(16, 0, "Hot", 2, 1, 1, new DataFunction<Boolean>()
 		{
 			@Override public Boolean getValue() {return isHot;}
 			@Override public void setValue(Boolean data) {isHot = data;}

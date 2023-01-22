@@ -8,8 +8,6 @@ import GameEngine.Configurables.ConfigManager;
 
 public class HexConfig
 {
-	
-	
 	public static int getHexRadius() // Hex radius in pixels
 	{
 		return Integer.valueOf(ConfigManager.getValue("hex_radius", "19"));

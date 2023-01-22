@@ -13,6 +13,10 @@
 package Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos;
 
 import GameEngine.MenuSlate.DataFunction;
+
+import java.util.function.Supplier;
+
+import GameEngine.MenuSlate;
 import GameEngine.Editor.EditorPanel;
 import Modules.MektonCore.Enums.ArmorType;
 import Modules.MektonCore.Enums.LevelRAM;
@@ -24,6 +28,7 @@ import Modules.MektonCore.StatsStuff.HitLocation.ServoType;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledCostValue;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledHitValue;
 import Utils.Logging;
+import Utils.MiscUtils;
 
 public class MekServo extends Servo
 {
@@ -122,6 +127,12 @@ public class MekServo extends Servo
 		if (value.greaterThan(getMaxArmor())) throw new ExcessValueException(value, getMaxArmor(), "armor");
 		armor = new ScaledHitValue(value);
 	}
+	/** Resets current armor to maximum.
+	 */
+	public void resetArmor()
+	{
+		try {setArmor(getMaxArmor());} catch (Exception e) {Logging.logException(e);} // Shouldn't be possible
+	}
 	/** Gets current armor.
 	 *  @return The current armor.
 	 */
@@ -184,68 +195,24 @@ public class MekServo extends Servo
 		else return getMaxHealthBase().getValue(Scale.mekton) / 2 + getMaxArmor().getValue(Scale.mekton) / 2;
 	}
 	
+
 	@Override
-	public String getName()
+	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier)
 	{
-		return "Mek Servo";
-	}
-	@Override
-	public EditorPanel editorPanel()
-	{
-		EditorPanel panel = super.editorPanel();
-		panel.setCells(10, 20);
-/*		EditorPanel subPanel1 = (EditorPanel) panel.addSubSlate(0, 2, 10, 3, null); // 2, 3, 4
-		
-		subPanel1.addInfo(0, 0, "Max health:", 4, 6, 1, () -> {return getMaxHealth().getValue(Scale.mekton) + " Mek kills";});
-		subPanel1.addInfo(0, 1, "Max spaces:", 4, 6, 1, () -> {return getMaxSpaces().getValue(Scale.mekton) + " Mek spaces";});
-		subPanel1.addInfo(0, 2, "Max armor:", 4, 6, 1, () -> {return getMaxArmor().getValue(Scale.mekton) + " Mek SP";});
-		
-//		EditorPanel subPanel2 = (EditorPanel) panel.addSubSlate(0, 5, 10, 6, null); // 5, 6, 7, 8, 9, 10
-		
-		subPanel2.addOptions(0, 0, "Scale:", 4, 6, 1, Scale.values(), new DataFunction<Scale>()
-		{
-			@Override public Scale getValue() {return scale;}
-			@Override public void setValue(Scale data) {scale = data;}	
-		});
-		subPanel2.addOptions(0, 1, "Servo class:", 4, 6, 1, ServoClass.values(), new DataFunction<ServoClass>()
+		slate.setCells(28, 2);
+		slate.addInfo(0, 0, "Health: ", 3, 2, 1, () ->{return MiscUtils.doublePrecise(getHealth().getValue(scale), 2) + "/" + MiscUtils.doublePrecise(getMaxHealth().getValue(scale), 2);});
+		// health / max health ^
+		slate.addInfo(0, 1, "Armor: ", 3, 2, 1, () ->{return MiscUtils.doublePrecise(getArmor().getValue(scale), 2) + "/" + MiscUtils.doublePrecise(getMaxArmor().getValue(scale), 2);});
+		slate.addOptions(5, 0, "Servo Class: ", 4, 7, 1, ServoClass.values(), new DataFunction<ServoClass>()
 		{
 			@Override public ServoClass getValue() {return servoClass;}
-			@Override public void setValue(ServoClass data) {servoClass = data;}	
+			@Override public void setValue(ServoClass data) {servoClass = data; resetHealth();}
 		});
-		subPanel2.addOptions(0, 2, "Armor class:", 4, 6, 1, ServoClass.values(), new DataFunction<ServoClass>()
+		slate.addOptions(5, 1, "Armor Class: ", 4, 7, 1, ServoClass.values(), new DataFunction<ServoClass>()
 		{
 			@Override public ServoClass getValue() {return armorClass;}
-			@Override public void setValue(ServoClass data) {armorClass = data;}	
+			@Override public void setValue(ServoClass data) {armorClass = data; resetArmor();}
 		});
-		subPanel2.addOptions(0, 3, "Servo type:", 4, 6, 1, ServoType.values(), new DataFunction<ServoType>()
-		{
-			@Override public ServoType getValue() {return servoType;}
-			@Override public void setValue(ServoType data) {servoType = data;}	
-		});
-		subPanel2.addOptions(0, 4, "Armor type:", 4, 6, 1, ArmorType.values(), new DataFunction<ArmorType>()
-		{
-			@Override public ArmorType getValue() {return armorType;}
-			@Override public void setValue(ArmorType data) {armorType = data;}	
-		});
-		subPanel2.addOptions(0, 5, "RAM level:", 4, 6, 1, LevelRAM.values(), new DataFunction<LevelRAM>()
-		{
-			@Override public LevelRAM getValue() {return levelRAM;}
-			@Override public void setValue(LevelRAM data) {levelRAM = data;}	
-		});
-
-		panel.addIntegerWheel(0, 11, "Sacrificed kills: ", 4, 0, (int) getMaxHealthBase().getValue(scale), 6, 1, new DataFunction<Integer>()
-		{
-
-			@Override public Integer getValue() {return (int) sacrificedHealth.getValue(scale);}
-			@Override
-			public void setValue(Integer data)
-			{
-				try {setSacrificedHealth(new ScaledHitValue(scale, data));}
-				catch (InsufficientHealthException e) {Logging.logException(e);}
-			} 
-		});
-		*/
-		return panel;
 	}
 	
 }

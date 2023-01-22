@@ -28,8 +28,10 @@ import GameEngine.EntityTypes.Behaviors.CameraHolder;
 import GameEngine.Server.Account;
 import GameEngine.Server.BaseServer;
 import GameEngine.Server.GameServer;
+import Modules.HexUtilities.HexConfig;
 import Modules.HexUtilities.HexEntity;
 import Modules.HexUtilities.HexStructures.Axial.AxialHexCoord3D;
+import Modules.MektonCore.MektonActorSprite;
 import Modules.MektonCore.MektonHex;
 import Modules.MektonCore.EntityTypes.MektonMap;
 import Modules.MektonCore.Enums.ArmorType;
@@ -71,7 +73,7 @@ public class TestModule implements Module, WorldMakingModule, ServerMakingModule
 	public void newWorld()
 	{
 		GameInfo.setWorld(new GameInfo.GameWorld());
-		MektonMap<MektonHex> map = new MektonMap<MektonHex>("Tilesets/DummyTileset", "/Tilesets/ZFog", EnvironmentType.clear);
+		MektonMap<MektonHex> map = new MektonMap<MektonHex>("Tilesets/DummyTileset", "/Tilesets/ZFog", EnvironmentType.none);
 		map.setDimensions(18, 9, 1, new MektonHex());
 	}
 	@Override
@@ -139,6 +141,10 @@ public class TestModule implements Module, WorldMakingModule, ServerMakingModule
 		panel.setSize(640, 480);
 		panel.validate();
 		panels.add(panel);
+		MektonActorSprite s = new MektonActorSprite("set1");
+		s.setBasicParams(0, 0, HexConfig.getHexWidth(), HexConfig.getHexHeight());
+		EditorPanel newPanel = s.editorPanel();
+		panels.add(newPanel);
 	}
 
 	@Override

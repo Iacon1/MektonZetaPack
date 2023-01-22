@@ -4,15 +4,11 @@
 
 package Modules.MektonCore;
 
-import java.util.Map;
-
 import com.google.gson.GsonBuilder;
 
-import GameEngine.MenuSlate;
 import GameEngine.Configurables.ModuleTypes.GSONModule;
 import GameEngine.Configurables.ModuleTypes.Module;
 import Modules.MektonCore.Adapters.MektonHexAdapter;
-import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.MultiplierSystem;
 
 public class MektonCore implements Module, GSONModule
 {

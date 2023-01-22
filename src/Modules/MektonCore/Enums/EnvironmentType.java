@@ -6,12 +6,21 @@ package Modules.MektonCore.Enums;
 
 public enum EnvironmentType
 {
-	clear,
-	arctic,
-	desert,
-	underwater,
-	highPressure,
-	space,
-	EM,
-	reentry
+	none(0),
+	arctic(.05),
+	desert(.05),
+	underwater(.05),
+	highPressure(.05),
+	space(.05),
+	EM(.1),
+	reentry(.1);
+	
+	private double costMult;
+	
+	private EnvironmentType(double costMult)
+	{
+		this.costMult = costMult;
+	}
+	
+	public double getCostMult() {return costMult;}
 }

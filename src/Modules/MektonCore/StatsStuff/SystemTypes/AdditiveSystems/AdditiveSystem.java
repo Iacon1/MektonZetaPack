@@ -4,16 +4,15 @@
 
 package Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems;
 
-import GameEngine.Editor.Editable;
-import GameEngine.Editor.EditorPanel;
-import Modules.MektonCore.Enums.Scale;
+import GameEngine.MenuSlatePopulator;
 import Modules.MektonCore.ExceptionTypes.ExcessValueException;
 import Modules.MektonCore.StatsStuff.HitLocation;
 import Modules.MektonCore.StatsStuff.LocatedItem;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledCostValue;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledHitValue;
+import Utils.Logging;
 
-public abstract class AdditiveSystem implements Editable, LocatedItem
+public abstract class AdditiveSystem implements MenuSlatePopulator, LocatedItem
 {
 	private int systemID;
 	private ScaledHitValue health;
@@ -58,6 +57,12 @@ public abstract class AdditiveSystem implements Editable, LocatedItem
 		if (value.greaterThan(getMaxHealth())) throw new ExcessValueException(value, getMaxHealth(), "health");
 		health.setValue(value);
 	}
+	/** Resets current health to maximum.
+	 */
+	public void resetHealth()
+	{
+		try {setHealth(getMaxHealth());} catch (Exception e) {Logging.logException(e);} // Shouldn't be possible
+	}
 	/** Returns the current health.
 	 *  @return health.
 	 */
@@ -77,15 +82,6 @@ public abstract class AdditiveSystem implements Editable, LocatedItem
 	 *  @return The cost.
 	 */
 	public abstract ScaledCostValue getCost();
-
-	@Override
-	public EditorPanel editorPanel()
-	{
-		EditorPanel panel = new EditorPanel(640, 480, 8, 4);
-		panel.addInfo(0, 0, "Cost:", 4, 4, 1, () -> {return getCost().getValue(Scale.mekton) + " CP";});
-		panel.addInfo(0, 1, "Weight:", 4, 4, 1, () -> {return getWeight() + " tons";});
-		return panel;
-	}
 	
 	@Override
 	public HitLocation getLocation()
