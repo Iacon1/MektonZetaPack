@@ -6,7 +6,8 @@ package Modules.MektonCore;
 
 import java.awt.Color;
 import java.io.File;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import GameEngine.GameInfo;
@@ -15,52 +16,67 @@ import GameEngine.MenuSlatePopulator;
 import GameEngine.Editor.Editable;
 import GameEngine.Editor.EditorPanel;
 import GameEngine.Graphics.LayeredSprite;
+import GameEngine.Managers.GraphicsManager;
 import GameEngine.MenuSlate.DataFunction;
 
 public class MektonActorSprite extends LayeredSprite implements Editable, MenuSlatePopulator
 {
 	final private static String dir = "MASSets";
 	private String setName;
+	private Map<String, Color[]> basePalettes;
+	private Map<String, Float[]> transforms;
 	
-	private Color getColor(String layerName)
+	private void applyTransformation(String layerName)
 	{
-		Color[] palette = getPalette(layerName).clone();
+		if (transforms.get(layerName) == null) transforms.put(layerName, new Float[]{0f, 0f, 0f});
+		Float[] transform = transforms.get(layerName);
 		
-		Arrays.sort(palette, (Color o1, Color o2) ->
-		{
-			float[] f1 = new float[3], f2 = new float[3];
-			Color.RGBtoHSB(o1.getRed(), o1.getGreen(), o1.getBlue(), f1);
-			Color.RGBtoHSB(o2.getRed(), o2.getGreen(), o2.getBlue(), f2);
-			if (f1[2] < f2[2]) return -1;
-			else if (f1[2] == f2[2]) return 0;
-			else return 1;
-		});
-		
-		return palette[palette.length / 2];
-	}
-	private float getHue(String layerName)
-	{
-		float[] f = new float[3];
-		Color c = getColor(layerName);
-		Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), f);
-		return f[0];
-	}
-	private void setHue(String layerName, float hue)
-	{
-		float oldHue = getHue(layerName);
-		
-		Color[] palette = getPalette(layerName).clone();
+		Color[] palette = basePalettes.get(layerName).clone();
 		for (int i = 0; i < palette.length; ++i)
 		{
 			float[] HSB = new float[3];
 			int alpha = palette[i].getAlpha();
 			Color.RGBtoHSB(palette[i].getRed(), palette[i].getGreen(), palette[i].getBlue(), HSB);
-			if (HSB[0] == 0 && oldHue == 0) HSB[0] = hue;
-			else HSB[0] *= hue / oldHue;
+			HSB[0] = GraphicsManager.rotateHue(HSB[0], transform[0]);
+			HSB[1] = Math.max(0, Math.min(1, HSB[1] + transform[1]));
+			HSB[2] = Math.max(0, Math.min(1, HSB[2] + transform[2]));
 			palette[i] = Color.getHSBColor(HSB[0], HSB[1], HSB[2]);
 			palette[i] = new Color(palette[i].getRed(), palette[i].getGreen(), palette[i].getBlue(), alpha);
 		}
 		setPalette(layerName, palette);
+	}
+	private float getRotation(String layerName)
+	{
+		if (transforms.get(layerName) == null) transforms.put(layerName, new Float[]{0f, 0f, 0f});
+		return transforms.get(layerName)[0];
+	}
+	private void setRotation(String layerName, float rot)
+	{
+		if (transforms.get(layerName) == null) transforms.put(layerName, new Float[]{0f, 0f, 0f});
+		transforms.get(layerName)[0] = rot;
+		applyTransformation(layerName);
+	}
+	private float getSaturation(String layerName)
+	{
+		if (transforms.get(layerName) == null) transforms.put(layerName, new Float[]{0f, 0f, 0f});
+		return transforms.get(layerName)[1];
+	}
+	private void setSaturation(String layerName, float sat)
+	{
+		if (transforms.get(layerName) == null) transforms.put(layerName, new Float[]{0f, 0f, 0f});
+		transforms.get(layerName)[1] = sat;
+		applyTransformation(layerName);
+	}
+	private float getBrightness(String layerName)
+	{
+		if (transforms.get(layerName) == null) transforms.put(layerName, new Float[]{0f, 0f, 0f});
+		return transforms.get(layerName)[2];
+	}
+	private void setBrightness(String layerName, float val)
+	{
+		if (transforms.get(layerName) == null) transforms.put(layerName, new Float[]{0f, 0f, 0f});
+		transforms.get(layerName)[2] = val;
+		applyTransformation(layerName);
 	}
 	
 	private static String[] removeFileExt(String[] strings)
@@ -96,16 +112,24 @@ public class MektonActorSprite extends LayeredSprite implements Editable, MenuSl
 			if (layerFile.isDirectory() && layerFile.list().length != 0)
 			{
 				String filePath = dir + "/" + setName + "/" + layerName + "/" + layerFile.list()[0].split(".png")[0];		
-				addLayer(layerName, filePath);
+				setLayer(layerName, filePath);
+				basePalettes.put(layerName, getPalette(layerName));
 			}
 		}
 	}
 	
-	public MektonActorSprite() {super();}
+	public MektonActorSprite()
+	{
+		super();
+		this.basePalettes = new HashMap<String, Color[]>();
+		this.transforms = new HashMap<String, Float[]>();
+	}
 	public MektonActorSprite(String setName)
 	{
 		super();
 		this.setName = setName;
+		this.basePalettes = new HashMap<String, Color[]>();
+		this.transforms = new HashMap<String, Float[]>();
 		updateSet();
 	}
 	
@@ -123,15 +147,34 @@ public class MektonActorSprite extends LayeredSprite implements Editable, MenuSl
 		int i = 1;
 		for (String layerName : getLayers())
 		{
-			slate.addOptions(0, 2 * i, layerName, 2, 5, 2, getLayerOptions(layerName), getLayerOptions(layerName), new DataFunction<String>()
+			int y = 4 * i - 2;
+			MenuSlate layerSlate = supplier.get();
+			layerSlate.setCells(15, 4);
+			slate.addSubSlate(0, y, 15, 4, layerSlate);
+			layerSlate.addOptions(0, 0, layerName, 2, 5, 2, getLayerOptions(layerName), getLayerOptions(layerName), new DataFunction<String>()
 			{
 				@Override public String getValue() {return getTexture(layerName).split("/")[3];}
-				@Override public void setValue(String data) {setTexture(dir + "/" + setName + "/" + layerName, data);}
+				@Override public void setValue(String data)
+				{
+					setLayer(layerName, dir + "/" + setName + "/" + layerName + "/" + data);
+					basePalettes.put(layerName, getPalette(layerName));
+					applyTransformation(layerName);
+				}
 			});
-			slate.addDoubleWheel(8, 2 * i, "Hue:", 2, 0, 1, 2, 3, 2, new DataFunction<Double>()
+			layerSlate.addDoubleWheel(9, 0, "Hue Shift", 3, -180, 0, 180, -1, 3, 2, new DataFunction<Double>()
 			{
-				@Override public Double getValue() {return Double.valueOf(getHue(layerName));}
-				@Override public void setValue(Double data) {setHue(layerName, data.floatValue());}
+				@Override public Double getValue() {return Double.valueOf(getRotation(layerName));}
+				@Override public void setValue(Double data) {setRotation(layerName, data.floatValue());}
+			});
+			layerSlate.addDoubleWheel(0, 2, "Saturation Shift", 4, -1, 0, 1, 2, 3, 2, new DataFunction<Double>()
+			{
+				@Override public Double getValue() {return Double.valueOf(getSaturation(layerName));}
+				@Override public void setValue(Double data) {setSaturation(layerName, data.floatValue());}
+			});
+			layerSlate.addDoubleWheel(8, 2, "Brightness Shift", 4, -1, 0, 1, 2, 3, 2, new DataFunction<Double>()
+			{
+				@Override public Double getValue() {return Double.valueOf(getBrightness(layerName));}
+				@Override public void setValue(Double data) {setBrightness(layerName, data.floatValue());}
 			});
 			++i;
 		}
