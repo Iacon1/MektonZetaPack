@@ -7,8 +7,8 @@ package Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems;
 
 import java.util.function.Supplier;
 
-import GameEngine.MenuSlate;
-import GameEngine.MenuSlate.DataFunction;
+import GameEngine.MenuStuff.MenuSlate;
+import GameEngine.MenuStuff.MenuSlate.DataFunction;
 
 public class Hydraulics extends MultiplierSystem
 {
@@ -53,9 +53,9 @@ public class Hydraulics extends MultiplierSystem
 	@Override
 	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier)
 	{
-		slate.setCells(20, 1);
-		slate.addInfo(0, 0, "Hydraulics", 4, 0, 1, () -> {return null;});
-		slate.addOptions(4, 0, "", 0, 5, 1, HydraulicsType.values(), new DataFunction<HydraulicsType>()
+		slate.setCells(20, 2);
+		slate.addInfo(0, 0, "Hydraulics", 4, 0, 2, () -> {return null;});
+		slate.addOptions(4, 0, "", 0, 5, 2, HydraulicsType.values(), new DataFunction<HydraulicsType>()
 		{
 			@Override public HydraulicsType getValue() {return hydraulicsType;}
 			@Override public void setValue(HydraulicsType data) {hydraulicsType = data;}

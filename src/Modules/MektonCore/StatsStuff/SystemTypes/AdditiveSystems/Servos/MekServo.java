@@ -12,12 +12,11 @@
 
 package Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos;
 
-import GameEngine.MenuSlate.DataFunction;
-
 import java.util.function.Supplier;
 
-import GameEngine.MenuSlate;
 import GameEngine.Editor.EditorPanel;
+import GameEngine.MenuStuff.MenuSlate;
+import GameEngine.MenuStuff.MenuSlate.DataFunction;
 import Modules.MektonCore.Enums.ArmorType;
 import Modules.MektonCore.Enums.LevelRAM;
 import Modules.MektonCore.Enums.Scale;
@@ -195,11 +194,10 @@ public class MekServo extends Servo
 		else return getMaxHealthBase().getValue(Scale.mekton) / 2 + getMaxArmor().getValue(Scale.mekton) / 2;
 	}
 	
-
 	@Override
 	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier)
 	{
-		slate.setCells(28, 2);
+		slate.setCells(20, 2);
 		slate.addInfo(0, 0, "Health: ", 3, 2, 1, () ->{return MiscUtils.doublePrecise(getHealth().getValue(scale), 2) + "/" + MiscUtils.doublePrecise(getMaxHealth().getValue(scale), 2);});
 		// health / max health ^
 		slate.addInfo(0, 1, "Armor: ", 3, 2, 1, () ->{return MiscUtils.doublePrecise(getArmor().getValue(scale), 2) + "/" + MiscUtils.doublePrecise(getMaxArmor().getValue(scale), 2);});
@@ -214,5 +212,4 @@ public class MekServo extends Servo
 			@Override public void setValue(ServoClass data) {armorClass = data; resetArmor();}
 		});
 	}
-	
 }

@@ -7,8 +7,8 @@ package Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems;
 
 import java.util.function.Supplier;
 
-import GameEngine.MenuSlate;
-import GameEngine.MenuSlate.DataFunction;
+import GameEngine.MenuStuff.MenuSlate;
+import GameEngine.MenuStuff.MenuSlate.DataFunction;
 
 public class Powerplant extends MultiplierSystem
 {
@@ -81,19 +81,19 @@ public class Powerplant extends MultiplierSystem
 	@Override
 	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier)
 	{
-		slate.setCells(20, 1);
-		slate.addInfo(0, 0, "Powerplant", 4, 0, 1, () -> {return null;});
-		slate.addOptions(4, 0, "", 0, 5, 1, Source.values(), new DataFunction<Source>()
+		slate.setCells(20, 2);
+		slate.addInfo(0, 0, "Powerplant", 4, 0, 2, () -> {return null;});
+		slate.addOptions(4, 0, "", 0, 5, 2, Source.values(), new DataFunction<Source>()
 		{
 			@Override public Source getValue() {return source;}
 			@Override public void setValue(Source data) {source = data;}
 		});
-		slate.addOptions(9, 0, "", 0, 6, 1, Charge.values(), new DataFunction<Charge>()
+		slate.addOptions(9, 0, "", 0, 6, 2, Charge.values(), new DataFunction<Charge>()
 		{
 			@Override public Charge getValue() {return charge;}
 			@Override public void setValue(Charge data) {charge = data;}
 		});
-		slate.addCheckbox(16, 0, "Hot", 2, 1, 1, new DataFunction<Boolean>()
+		slate.addCheckbox(16, 0, "Hot", 2, 1, 2, new DataFunction<Boolean>()
 		{
 			@Override public Boolean getValue() {return isHot;}
 			@Override public void setValue(Boolean data) {isHot = data;}

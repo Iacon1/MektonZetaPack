@@ -6,7 +6,7 @@ package Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos;
 
 import java.util.function.Supplier;
 
-import GameEngine.MenuSlate;
+import GameEngine.MenuStuff.MenuSlate;
 import Modules.MektonCore.Enums.Scale;
 import Modules.MektonCore.StatsStuff.HitLocation.ServoType;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledCostValue;

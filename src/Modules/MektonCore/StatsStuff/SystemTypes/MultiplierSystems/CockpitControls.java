@@ -7,8 +7,8 @@ package Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems;
 
 import java.util.function.Supplier;
 
-import GameEngine.MenuSlate;
-import GameEngine.MenuSlate.DataFunction;
+import GameEngine.MenuStuff.MenuSlate;
+import GameEngine.MenuStuff.MenuSlate.DataFunction;
 import Modules.MektonCore.StatsStuff.HitLocation;
 import Modules.MektonCore.StatsStuff.HitLocation.ServoSide;
 import Modules.MektonCore.StatsStuff.HitLocation.ServoType;
@@ -67,14 +67,14 @@ public class CockpitControls extends MultiplierSystem
 	@Override
 	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier)
 	{
-		slate.setCells(20, 1);
-		slate.addInfo(0, 0, "Cockpit", 4, 0, 1, () -> {return null;});
-		slate.addOptions(4, 0, "", 0, 5, 1, Control.values(), new DataFunction<Control>()
+		slate.setCells(20, 2);
+		slate.addInfo(0, 0, "Cockpit", 4, 0, 2, () -> {return null;});
+		slate.addOptions(4, 0, "", 0, 5, 2, Control.values(), new DataFunction<Control>()
 		{
 			@Override public Control getValue() {return control;}
 			@Override public void setValue(Control data) {control = data;}
 		});
-		slate.addOptions(9, 0, "", 0, 6, 1, Enclosure.values(), new DataFunction<Enclosure>()
+		slate.addOptions(9, 0, "", 0, 6, 2, Enclosure.values(), new DataFunction<Enclosure>()
 		{
 			@Override public Enclosure getValue() {return enclosure;}
 			@Override public void setValue(Enclosure data) {enclosure = data;}

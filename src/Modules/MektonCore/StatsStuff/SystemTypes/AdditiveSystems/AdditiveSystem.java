@@ -4,7 +4,7 @@
 
 package Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems;
 
-import GameEngine.MenuSlatePopulator;
+import GameEngine.MenuStuff.MenuSlatePopulator;
 import Modules.MektonCore.ExceptionTypes.ExcessValueException;
 import Modules.MektonCore.StatsStuff.HitLocation;
 import Modules.MektonCore.StatsStuff.LocatedItem;

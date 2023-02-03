@@ -11,13 +11,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import GameEngine.GameInfo;
-import GameEngine.MenuSlate;
-import GameEngine.MenuSlatePopulator;
 import GameEngine.Editor.Editable;
 import GameEngine.Editor.EditorPanel;
 import GameEngine.Graphics.LayeredSprite;
 import GameEngine.Managers.GraphicsManager;
-import GameEngine.MenuSlate.DataFunction;
+import GameEngine.MenuStuff.MenuSlate;
+import GameEngine.MenuStuff.MenuSlatePopulator;
+import GameEngine.MenuStuff.MenuSlate.DataFunction;
 
 public class MektonActorSprite extends LayeredSprite implements Editable, MenuSlatePopulator
 {

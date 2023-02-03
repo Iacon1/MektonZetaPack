@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 import javax.swing.JPanel;
 
-import GameEngine.MenuSlate;
+import GameEngine.MenuStuff.MenuSlate;
 import Modules.MektonCore.Enums.Scale;
 import Modules.MektonCore.StatsStuff.DamageTypes.Damage;
 import Modules.MektonCore.StatsStuff.DamageTypes.EnergyDamage;

@@ -4,17 +4,18 @@
 
 package Modules.MektonCore.StatsStuff.SheetTypes;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import GameEngine.MenuSlate;
 import GameEngine.Editor.Editable;
 import GameEngine.Editor.EditorPanel;
-import GameEngine.MenuSlate.DataFunction;
-import GameEngine.MenuSlate.TabHandle;
-import GameEngine.MenuSlatePopulator;
+import GameEngine.EntityTypes.Alignable;
+import GameEngine.MenuStuff.MenuSlate;
+import GameEngine.MenuStuff.MenuSlatePopulator;
+import GameEngine.MenuStuff.MenuSlate.ComponentHandle;
+import GameEngine.MenuStuff.MenuSlate.DataFunction;
+import GameEngine.MenuStuff.MenuSlate.TabHandle;
 import Modules.MektonCore.Enums.ArmorType;
 import Modules.MektonCore.Enums.LevelRAM;
 import Modules.MektonCore.Enums.Scale;
@@ -25,8 +26,11 @@ import Modules.MektonCore.StatsStuff.LocationList;
 import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledCostValue;
 import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.AdditiveSystem;
 import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos.MekServo;
+import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.ACE;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.CockpitControls;
+import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.Environmentals;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.Hydraulics;
+import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.ManeuverVerniers;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.MultiplierSystem;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.Powerplant;
 import Utils.MiscUtils;
@@ -41,6 +45,9 @@ public class MekSheet implements Editable, MenuSlatePopulator
 	private Powerplant powerplant;
 	private CockpitControls cockpitControls;
 	private Hydraulics hydraulics;
+	private Environmentals environmentals; 
+	private ManeuverVerniers maneuverVerniers;
+	private ACE ace;
 	
 	protected String name;
 	protected double weightEfficiency; // Weight efficiency in tons.
@@ -58,6 +65,9 @@ public class MekSheet implements Editable, MenuSlatePopulator
 		powerplant = new Powerplant(); multiplierSystems.add(powerplant);
 		cockpitControls = new CockpitControls(); multiplierSystems.add(cockpitControls);
 		hydraulics = new Hydraulics(); multiplierSystems.add(hydraulics);
+		environmentals = new Environmentals(); multiplierSystems.add(environmentals);
+		maneuverVerniers = new ManeuverVerniers(); multiplierSystems.add(maneuverVerniers);
+		ace = new ACE(); multiplierSystems.add(ace);
 	}
 	
 	public MekServo getServo(HitLocation location) {return servos.getLocation(location);}
@@ -114,6 +124,8 @@ public class MekSheet implements Editable, MenuSlatePopulator
 		// MV penalty due to weight;
 		MV = -1 * (int) Math.max(1, Math.floor(getWeight() / 10d));
 		if (MV < -10) MV = -10;
+		
+		MV += maneuverVerniers.getLevel();
 		return MV;
 	}
 	@Override
@@ -142,19 +154,20 @@ public class MekSheet implements Editable, MenuSlatePopulator
 			populateServosSlate(tabHandle, slateSupplier);
 		});
 		
-		int i = 0;
+		ComponentHandle handle = null;
 		
 		for (MekServo servo : servos)
 		{
+			
 			MenuSlate servoSlate = slateSupplier.get();
 			servo.populate(servoSlate, slateSupplier);
-			servosSlate.addSubSlate(0, 4 + 3 * i, 28, 3, servoSlate);
-			servosSlate.addButton(28, 4 + 3 * i, "Remove", 5, 3, () ->
+			if (handle != null) handle = servosSlate.addSubSlate(handle, Alignable.AlignmentPoint.southWest, 0, 0, 28, 3, servoSlate);
+			else handle = servosSlate.addSubSlate(0, 4, 28, 3, servoSlate);
+			servosSlate.addButton(handle, Alignable.AlignmentPoint.northEast, 0, 0, "Remove", 5, 3, () ->
 			{
 				servos.remove(servo);
 				populateServosSlate(tabHandle, slateSupplier);
 			});
-			i++;
 		}
 		
 		tabHandle.setTab("Servos", servosSlate);
@@ -162,6 +175,7 @@ public class MekSheet implements Editable, MenuSlatePopulator
 	private void populateAdditivesSlate(TabHandle tabHandle, Supplier<MenuSlate> slateSupplier)
 	{
 		MenuSlate addSlate = slateSupplier.get();
+		addSlate.setCells(32,  23);
 		tabHandle.setTab("Additive Systems", addSlate);
 		addSlate.addInfo(0, 1, "Additive", 10, 0, 1, () -> {return null;});
 	}
@@ -170,13 +184,15 @@ public class MekSheet implements Editable, MenuSlatePopulator
 		MenuSlate multSlate = slateSupplier.get();
 		multSlate.setCells(32,  23);
 		tabHandle.setTab("Multiplier Systems", multSlate);
-		int i = 0;
+		
+		ComponentHandle handle = null;
+		
 		for (MultiplierSystem multiplierSystem : multiplierSystems)
 		{
 			MenuSlate multItem = slateSupplier.get();
 			multiplierSystem.populate(multItem, slateSupplier);
-			multSlate.addSubSlate(0, i + 1, 20, 2, multItem);
-			i += 2;
+			if (handle != null) handle = multSlate.addSubSlate(handle, Alignable.AlignmentPoint.southWest, 0, 0, multItem);
+			else handle = multSlate.addSubSlate(0, 1, multItem);
 		}
 	}
 	
@@ -210,4 +226,6 @@ public class MekSheet implements Editable, MenuSlatePopulator
 		populateAdditivesSlate(tabHandle, slateSupplier);
 		populateMultipliersSlate(tabHandle, slateSupplier);
 	}
+
+
 }

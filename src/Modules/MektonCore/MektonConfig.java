@@ -8,8 +8,13 @@ import GameEngine.Configurables.ConfigManager;
 
 public class MektonConfig
 {
-	public static boolean isSenkiDice()
+	public static boolean areDiceSenki()
 	{
-		return Boolean.valueOf(ConfigManager.getValue("mekton_senkiDice", "false"));
+		return Boolean.valueOf(ConfigManager.getValue("Mekton_senkiDice", "false"));
+	}
+	
+	public static boolean isSpaceProtectionFree()
+	{
+		return Boolean.valueOf(ConfigManager.getValue("Mekton_freeSpaceEnv", "false"));
 	}
 }
