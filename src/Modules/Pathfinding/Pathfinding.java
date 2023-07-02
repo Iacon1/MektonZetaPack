@@ -4,25 +4,8 @@
 
 package Modules.Pathfinding;
 
-import GameEngine.Configurables.ModuleTypes.Module;
+import GameEngine.Configurables.ModuleTypes.DefaultModule;
 
-public class Pathfinding implements Module
+public class Pathfinding extends DefaultModule
 {
-
-	@Override
-	public ModuleConfig getModuleConfig()
-	{
-		ModuleConfig config = new ModuleConfig();
-		config.moduleName = "Pathfinding";
-		config.moduleVersion = "V0.X";
-		config.moduleDescription = "An A* pathfinding engine.";
-		
-		return config;
-	}
-
-	@Override
-	public void initModule()
-	{
-	}
-
 }

@@ -6,64 +6,37 @@ package Modules.TestModule;
 
 import GameEngine.Graphics.Camera;
 import GameEngine.Graphics.ScreenCanvas;
-import GameEngine.Graphics.UtilCanvas;
 
 import java.util.List;
 
 import javax.swing.JPanel;
 
 import GameEngine.GameInfo;
-import GameEngine.IntPoint2D;
-import GameEngine.Configurables.ConfigManager;
 import GameEngine.Configurables.ModuleTypes.EditorPopulatingModule;
 import GameEngine.Configurables.ModuleTypes.GraphicsHandlerModule;
-import GameEngine.Configurables.ModuleTypes.Module;
+import GameEngine.Configurables.ModuleTypes.DefaultModule;
 import GameEngine.Configurables.ModuleTypes.PlayerHandlerModule;
 import GameEngine.Configurables.ModuleTypes.ServerMakingModule;
 import GameEngine.Configurables.ModuleTypes.WorldMakingModule;
 import GameEngine.Editor.EditorPanel;
-import GameEngine.Configurables.ModuleTypes.Module.ModuleConfig;
 import GameEngine.EntityTypes.GameEntity;
 import GameEngine.EntityTypes.Behaviors.CameraHolder;
 import GameEngine.Server.Account;
 import GameEngine.Server.BaseServer;
 import GameEngine.Server.GameServer;
 import Modules.HexUtilities.HexConfig;
-import Modules.HexUtilities.HexEntity;
 import Modules.HexUtilities.HexStructures.Axial.AxialHexCoord3D;
 import Modules.MektonCore.MektonActorSprite;
 import Modules.MektonCore.MektonHex;
 import Modules.MektonCore.EntityTypes.MektonMap;
-import Modules.MektonCore.Enums.ArmorType;
 import Modules.MektonCore.Enums.EnvironmentType;
-import Modules.MektonCore.Enums.LevelRAM;
-import Modules.MektonCore.Enums.Scale;
-import Modules.MektonCore.Enums.ServoClass;
-import Modules.MektonCore.StatsStuff.HitLocation.ServoType;
 import Modules.MektonCore.StatsStuff.SheetTypes.MekSheet;
-import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos.MekServo;
 import Utils.Logging;
 
-public class TestModule implements Module, WorldMakingModule, ServerMakingModule, GraphicsHandlerModule, PlayerHandlerModule, EditorPopulatingModule
+public class TestModule extends DefaultModule implements WorldMakingModule, ServerMakingModule, GraphicsHandlerModule, PlayerHandlerModule, EditorPopulatingModule
 {
 	@Override
-	public ModuleConfig getModuleConfig()
-	{
-		ModuleConfig config = new ModuleConfig();
-		config.moduleName = "Test Module";
-		config.moduleVersion = "V0.X";
-		config.moduleDescription = "A testing rig.";
-		
-		return config;
-	}
-
-	@Override
-	public void initModule()
-	{
-	}
-
-	@Override
-	public GameServer makeServer()
+	public GameServer<?> makeServer()
 	{
 		BaseServer server = new BaseServer();
 		return server;

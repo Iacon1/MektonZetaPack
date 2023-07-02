@@ -1,0 +1,8 @@
+{
+	"moduleName":"Pathfinding",
+	"engineVersion":"V0.X",
+	"moduleVersion":"V0.X",
+	"moduleDescription":"A very general A* pathfinding engine.",
+	"dependencies":[],
+	"incompatibilities":[]
+}

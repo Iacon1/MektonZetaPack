@@ -1,0 +1,8 @@
+{
+	"moduleName":"Mekton Core",
+	"engineVersion":"V0.X",
+	"moduleVersion":"V0.X",
+	"moduleDescription":"Mekton's core rules and system, as best as they\ncan be replicated in this engine.",
+	"dependencies":["Hex Utils", "Pathfinding"],
+	"incompatibilities":[]
+}

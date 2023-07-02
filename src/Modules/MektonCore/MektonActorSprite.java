@@ -91,24 +91,24 @@ public class MektonActorSprite extends LayeredSprite implements Editable, MenuSl
 	}
 	private static String[] getSets()
 	{
-		File setFolder = new File(GameInfo.getServerPackResource("Graphics/" + dir + "/" ));
+		File setFolder = new File(GameInfo.inServerPack("Graphics/" + dir + "/" ));
 		return removeFileExt(setFolder.list());
 	}
 	private String[] getLayers()
 	{
-		File setFile = new File(GameInfo.getServerPackResource("Graphics/" + dir + "/" + setName));
+		File setFile = new File(GameInfo.inServerPack("Graphics/" + dir + "/" + setName));
 		return removeFileExt(setFile.list());
 	}
 	private String[] getLayerOptions(String layerName)
 	{
-		File layerFile = new File(GameInfo.getServerPackResource("Graphics/" + dir + "/" + setName + "/" + layerName));
+		File layerFile = new File(GameInfo.inServerPack("Graphics/" + dir + "/" + setName + "/" + layerName));
 		return removeFileExt(layerFile.list());
 	}
 	private void updateSet()
 	{	
 		for (String layerName : getLayers())
 		{
-			File layerFile = new File(GameInfo.getServerPackResource("Graphics/" + dir + "/" + setName + "/" + layerName));
+			File layerFile = new File(GameInfo.inServerPack("Graphics/" + dir + "/" + setName + "/" + layerName));
 			if (layerFile.isDirectory() && layerFile.list().length != 0)
 			{
 				String filePath = dir + "/" + setName + "/" + layerName + "/" + layerFile.list()[0].split(".png")[0];		

@@ -4,27 +4,8 @@
 
 package Modules.Security;
 
-import GameEngine.Configurables.ModuleTypes.Module;
+import GameEngine.Configurables.ModuleTypes.DefaultModule;
 
-public class Security implements Module
+public class Security extends DefaultModule
 {
-
-	@Override
-	public ModuleConfig getModuleConfig()
-	{
-		ModuleConfig config = new ModuleConfig();
-		config.moduleName = "Security";
-		config.moduleVersion = "V0.X";
-		config.moduleDescription = "A basic roles system.";
-		
-		return config;
-	}
-
-	@Override
-	public void initModule()
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

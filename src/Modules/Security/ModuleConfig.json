@@ -1,0 +1,8 @@
+{
+	"moduleName":"Security",
+	"engineVersion":"V0.X",
+	"moduleVersion":"V0.X",
+	"moduleDescription":"A basic roles system.",
+	"dependencies":[],
+	"incompatibilities":[]
+}

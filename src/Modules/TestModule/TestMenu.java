@@ -17,7 +17,7 @@ public class TestMenu extends GUISpriteEntity
 	public TestMenu()
 	{
 		super();
-		setSprite(new SingleSprite(GameInfo.getServerPackResource("DummyPlayer.PNG")));
+		setSprite(new SingleSprite(GameInfo.inServerPack("DummyPlayer.PNG")));
 		setSpriteParams(0, 0, HexConfig.getHexWidth(), 2 * HexConfig.getHexHeight());
 		align(AlignmentPoint.northEast, null, AlignmentPoint.northEast);
 	}

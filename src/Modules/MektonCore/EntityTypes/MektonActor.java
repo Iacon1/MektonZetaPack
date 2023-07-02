@@ -33,7 +33,7 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	
 	public static final int turnTime = 10; // Time of a single turn in seconds
 	private double actionPoints;
-	private transient SimpleTimer actionTimer;
+	private transient static SimpleTimer actionTimer = new SimpleTimer();
 	private transient ParsingCommandBank commandBank;
 	
 	protected enum ActorAnim // Animations
@@ -201,7 +201,6 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	{
 		super();
 		actionPoints = 0f;
-		actionTimer = new SimpleTimer();
 		commandBank = new ParsingCommandBank();
 		
 		registerCommands();
@@ -210,7 +209,6 @@ public abstract class MektonActor extends MapEntity implements CommandRunner, Ro
 	{
 		super(map);
 		actionPoints = 0f;
-		actionTimer = new SimpleTimer();
 		commandBank = new ParsingCommandBank();
 		
 		resetActionPoints();

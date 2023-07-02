@@ -1,0 +1,8 @@
+{
+	"moduleName":"Hex Utils",
+	"engineVersion":"V0.X",
+	"moduleVersion":"V0.X",
+	"moduleDescription":"Utilities for telemetry on a hex grid.",
+	"dependencies":[],
+	"incompatibilities":[]
+}

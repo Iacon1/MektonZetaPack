@@ -4,23 +4,8 @@
 
 package Modules.HexUtilities;
 
-import GameEngine.Configurables.ModuleTypes.Module;
+import GameEngine.Configurables.ModuleTypes.DefaultModule;
 
-public class HexUtilities implements Module
+public class HexUtilities extends DefaultModule
 {
-
-	@Override
-	public ModuleConfig getModuleConfig()
-	{
-		ModuleConfig config = new ModuleConfig();
-		config.moduleName = "Hex Utilities";
-		config.moduleVersion = "V0.X";
-		config.moduleDescription = "Systems for handling a Hex grid.";
-		
-		return config;
-	}
-
-	@Override
-	public void initModule() {}
-
 }

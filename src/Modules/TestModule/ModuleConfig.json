@@ -1,0 +1,8 @@
+{
+	"moduleName":"Test Module",
+	"engineVersion":"V0.X",
+	"moduleVersion":"V0.X",
+	"moduleDescription":"A barebones server config for test purposes.",
+	"dependencies":["Mekton Core"],
+	"incompatibilities":[]
+}

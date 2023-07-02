@@ -40,7 +40,7 @@ import Modules.MektonCore.MektonHex;
 import Modules.MektonCore.Enums.EnvironmentType;
 import Modules.Pathfinding.AStar;
 import Modules.Pathfinding.PathfindingAdapter;
-import Utils.JSONManager;
+import Utils.DataManager;
 import Utils.Logging;
 import Utils.MiscUtils;
 import Utils.GSONConfig.TransSerializables.TransSerializable;
@@ -312,7 +312,7 @@ public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap
 	@Override
 	public void preSerialize()
 	{
-		serializedMap = JSONManager.serializeJSON(map);
+		serializedMap = DataManager.serialize(map);
 		hexClass = MiscUtils.ClassToString(map.getHex(new AxialHexCoord3D(0, 0, 0)).getClass());
 	}
 	@Override
@@ -322,7 +322,7 @@ public class MektonMap<T extends MektonHex> extends GameEntity implements HexMap
 		try {hexClass = (Class<T>) ModuleManager.getLoader().loadClass(this.hexClass);} // Convert string back into class.
 		catch (Exception e) {Logging.logException(e); return;}
 		
-		map = (InternalMap<T>) JSONManager.deserializeCollectionJSONList(serializedMap, InternalMap.class, hexClass);
+		map = (InternalMap<T>) DataManager.deserializeCollectionList(serializedMap, InternalMap.class, hexClass);
 		
 		serializedMap = null;
 		this.hexClass = null;

@@ -29,7 +29,6 @@ public class ACE extends MultiplierSystem
 
 		public double getCostMult() {return costMult;}
 		public double getMPModMult() {return MPModMult;}
-		
 	}
 	
 	private Level level = Level.level0;
@@ -45,7 +44,7 @@ public class ACE extends MultiplierSystem
 	public void populate(MenuSlate slate, Supplier<MenuSlate> supplier)
 	{
 		slate.setCells(20, 2);
-		slate.addInfo(0, 0, "Maneuver Verniers", 4, 0, 2, () -> {return null;});
+		slate.addInfo(0, 0, "ACE", 4, 0, 2, () -> {return null;});
 		slate.addOptions(5, 0, "Level: ", 2, 3, 2, Level.values(), new DataFunction<Level>()
 		{
 			@Override public Level getValue() {return level;}

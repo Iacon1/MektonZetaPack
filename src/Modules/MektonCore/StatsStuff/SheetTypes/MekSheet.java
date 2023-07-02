@@ -27,12 +27,15 @@ import Modules.MektonCore.StatsStuff.ScaledUnits.ScaledCostValue;
 import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.AdditiveSystem;
 import Modules.MektonCore.StatsStuff.SystemTypes.AdditiveSystems.Servos.MekServo;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.ACE;
+import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.Cloaking;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.CockpitControls;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.Environmentals;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.Hydraulics;
+import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.InternalAutomation;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.ManeuverVerniers;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.MultiplierSystem;
 import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.Powerplant;
+import Modules.MektonCore.StatsStuff.SystemTypes.MultiplierSystems.ShadowImager;
 import Utils.MiscUtils;
 
 public class MekSheet implements Editable, MenuSlatePopulator
@@ -48,6 +51,9 @@ public class MekSheet implements Editable, MenuSlatePopulator
 	private Environmentals environmentals; 
 	private ManeuverVerniers maneuverVerniers;
 	private ACE ace;
+	private InternalAutomation internalAutomation;
+	private Cloaking cloaking;
+	private ShadowImager shadowImager;
 	
 	protected String name;
 	protected double weightEfficiency; // Weight efficiency in tons.
@@ -68,6 +74,9 @@ public class MekSheet implements Editable, MenuSlatePopulator
 		environmentals = new Environmentals(); multiplierSystems.add(environmentals);
 		maneuverVerniers = new ManeuverVerniers(); multiplierSystems.add(maneuverVerniers);
 		ace = new ACE(); multiplierSystems.add(ace);
+		internalAutomation = new InternalAutomation(); multiplierSystems.add(internalAutomation);
+		cloaking = new Cloaking(); multiplierSystems.add(cloaking);
+		shadowImager = new ShadowImager(); multiplierSystems.add(shadowImager);
 	}
 	
 	public MekServo getServo(HitLocation location) {return servos.getLocation(location);}
@@ -126,6 +135,9 @@ public class MekSheet implements Editable, MenuSlatePopulator
 		if (MV < -10) MV = -10;
 		
 		MV += maneuverVerniers.getLevel();
+
+		if (MV > 0) MV = 0; // Put things that can't raise above 0 above, things that can below
+		
 		return MV;
 	}
 	@Override
@@ -182,8 +194,11 @@ public class MekSheet implements Editable, MenuSlatePopulator
 	private void populateMultipliersSlate(TabHandle tabHandle, Supplier<MenuSlate> slateSupplier)
 	{
 		MenuSlate multSlate = slateSupplier.get();
-		multSlate.setCells(32,  23);
-		tabHandle.setTab("Multiplier Systems", multSlate);
+		MenuSlate multScrollSlate = slateSupplier.get();
+		multSlate.setCells(32, 23);
+		multScrollSlate.setCells(32, 23);
+		multScrollSlate.addScrollSlate(0, 0, 32, 23, multSlate);
+		tabHandle.setTab("Multiplier Systems", multScrollSlate);
 		
 		ComponentHandle handle = null;
 		
